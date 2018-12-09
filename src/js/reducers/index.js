@@ -1,3 +1,4 @@
+// src/js/reducers/index.js
 import { MINESWEEPER } from "../constants/action-types";
 
 

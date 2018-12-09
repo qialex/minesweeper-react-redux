@@ -1,10 +1,11 @@
 // src/js/components/Game.js
 import React, {Component} from "react";
+import {Link} from "react-router-dom";
 import connect from "react-redux/es/connect/connect";
 import {resetGame, updateGameTime} from "../actions";
 import Field from "./Field";
-import Settings from "./Settings";
 import '../../main.css';
+
 
 const mapStateToProps = state => {
     return { game: {...state.game}, settings: {...state.settings} };
@@ -21,7 +22,6 @@ class ConnectedGame extends Component{
         super();
         this.state = {
             timer: null,
-            isSettingsOpened: false
         };
     }
 
@@ -38,9 +38,6 @@ class ConnectedGame extends Component{
             clearInterval(this.state.timer);
             this.setState({timer: null});
         }
-        // if (!game.started && this.state.isSettingsOpened) {
-        //     this.handleSettingsClick()
-        // }
     }
 
     tick() {
@@ -52,15 +49,8 @@ class ConnectedGame extends Component{
     handleNewGameClick() {
         this.props.resetGame();
     }
-    handleSettingsClose() {
-        this.setState({isSettingsOpened: false});
-    }
-    handleSettingsToggle() {
-        this.setState({isSettingsOpened: !this.state.isSettingsOpened});
-    }
 
     render() {
-        const { isSettingsOpened } = this.state;
         const { game, settings } = this.props;
         const bombsLeft = settings.bombs - game.flags;
 
@@ -68,10 +58,7 @@ class ConnectedGame extends Component{
         return (
             <div className="game">
                 <div className="settings">
-                    <button type="submit" className="btn btn-success btn-lg" onClick={this.handleSettingsToggle.bind(this)}>
-                        Settings
-                    </button>
-                    {isSettingsOpened ? <Settings handleSettingsSet={this.handleSettingsClose.bind(this)} /> : ''}
+                    <Link to="/settings/">Settings</Link>
                 </div>
                 <div className="control-panel">
                     {bombsLeft}
