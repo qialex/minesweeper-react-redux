@@ -1,38 +1,84 @@
-import { ADD_ARTICLE, EDIT_ARTICLE, DELETE_ARTICLE } from "../../src/js/constants/action-types";
-import { addArticle, editArticle, deleteArticle } from "../../src/js/actions/index";
-import uuidv1 from 'uuid';
+import { MINESWEEPER, LANGUAGE_CHANGED } from "../../src/js/constants/action-types";
+import {
+    globalChangeLanguage,
+    resetGame,
+    changeGameSettings,
+    updateGameTime,
+    processLeftClick,
+    processRightClick
+} from "../../src/js/actions/index";
+import GameSettings from "../../src/js/models/GameSettings";
+
+
 describe('actions', () => {
-    it('should create an action to add an article', () => {
-        const article = {
-            id: uuidv1(),
-            title: 'Test title'
-        }
+
+    it('should create an action to change language', () => {
+
+        const language = 'en';
+
         const expectedAction = {
-            type: ADD_ARTICLE,
-            payload: article
-        }
-        expect(addArticle(article)).toEqual(expectedAction)
-    })
-    it('should create an action to edit an article', () => {
-        const article = {
-            id: uuidv1(),
-            title: 'Test title'
-        }
+            type: LANGUAGE_CHANGED,
+            payload: language,
+        };
+
+        expect(globalChangeLanguage(language)).toEqual(expectedAction)
+    });
+
+    it('should create an action to reset game', () => {
+
         const expectedAction = {
-            type: EDIT_ARTICLE,
-            payload: article
-        }
-        expect(editArticle(article)).toEqual(expectedAction)
-    })
-    it('should create an action to delete an article', () => {
-        const article = {
-            id: uuidv1(),
-            title: 'Test title'
-        }
+            type: MINESWEEPER.RESET_GAME,
+        };
+
+        expect(resetGame()).toEqual(expectedAction)
+    });
+
+    it('should create an action to change game settings game', () => {
+
+        const gameSettings = new GameSettings().getData();
+
         const expectedAction = {
-            type: DELETE_ARTICLE,
-            payload: article
-        }
-        expect(deleteArticle(article)).toEqual(expectedAction)
-    })
-})
+            type: MINESWEEPER.CHANGE_GAME_SETTINGS,
+            payload: gameSettings,
+        };
+
+        expect(changeGameSettings(gameSettings)).toEqual(expectedAction)
+    });
+
+    it('should create an action to update time', () => {
+
+        const time = 10;
+
+        const expectedAction = {
+            type: MINESWEEPER.UPDATE_GAME_TIME,
+            payload: time,
+        };
+
+        expect(updateGameTime(time)).toEqual(expectedAction)
+    });
+
+    it('should create an action to process a left click', () => {
+
+        const corrdinaes = {x: 1, y: 5};
+
+        const expectedAction = {
+            type: MINESWEEPER.PROCESS_LEFT_CLICK,
+            payload: corrdinaes,
+        };
+
+        expect(processLeftClick(corrdinaes)).toEqual(expectedAction)
+    });
+
+    it('should create an action to process a right click', () => {
+
+        const corrdinaes = {x: 1, y: 5};
+
+        const expectedAction = {
+            type: MINESWEEPER.PROCESS_RIGHT_CLICK,
+            payload: corrdinaes,
+        };
+
+        expect(processRightClick(corrdinaes)).toEqual(expectedAction)
+    });
+
+});

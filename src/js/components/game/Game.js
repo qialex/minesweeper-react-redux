@@ -76,6 +76,8 @@ class ConnectedGame extends Component{
         const { game, gameSettings } = this.props;
         const bombsLeft = gameSettings.bombs - game.flags;
 
+        const mainButtonClass = game.won ? 'game-won' : game.finished ? 'game-lost' : '';
+
         return (
             <div className="main-wrapper">
                 <div className="game">
@@ -87,7 +89,7 @@ class ConnectedGame extends Component{
                             {bombsLeft}
                         </div>
                         <div className="main-button">
-                            <button type="submit" className={game.won ? 'game-won' : ''} onClick={this.handleNewGameClick.bind(this)}>
+                            <button type="submit" className={mainButtonClass} onClick={this.handleNewGameClick.bind(this)}>
                             </button>
                         </div>
                         <div className="time-display">

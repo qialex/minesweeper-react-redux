@@ -1,12 +1,12 @@
 
 .main-wrapper {
   display: flex;
-  justify-content: center;
 }
 .game {
   display: flex;
   flex-direction: column;
   background-color: #c5c5c5;
+  margin: auto;
 
   .settings, .control-panel {
     padding: 0.1em;
@@ -40,9 +40,13 @@
     .main-button {
       button {
         height: 1em;
-        background-color: red;
+        background-color: grey;
         position: relative;
         top: -0.1em;
+
+        &.game-lost {
+          background-color: red;
+        }
 
         &.game-won {
           background-color: darkgreen;

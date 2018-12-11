@@ -63,18 +63,29 @@ export const openField = (field) => {
         field.isOpened = true;
 
         // if field is empty
-        if (!field.number) {
+        if (!field.number && field.neighbors) {
 
             // open neighbors
-            field.neighbors.filter(f => {
+            field.neighbors
+                .map(f => {
 
-                f.isFlag = false;
-                f.isQestion = false;
+                    if (!f.isOpened) {
 
-                // recursively
-                openField(f);
-            })
+                        f.isFlag = false;
+                        f.isQestion = false;
+
+                        // recursively
+                        openField(f);
+                    }
+
+                })
+        } else {
+
+            return
         }
+    } else {
+
+        return
     }
 };
 
@@ -133,6 +144,12 @@ export const seedBombs = (fields, settings, clickedCoordinates) => {
 
             // placing number is field not a bomb
             field.number = field.neighbors.filter(f => f.isBomb).length;
+
+            if (field.number) {
+
+                // removing neighbors because they are no longer need
+                field.neighbors = undefined;
+            }
         }
 
         return field;
