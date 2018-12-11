@@ -2,51 +2,60 @@
 import React, {Component} from "react";
 import connect from "react-redux/es/connect/connect";
 import { processLeftClick, processRightClick } from "../actions";
+import { getFieldByCoordinates } from '../utils/utils';
 import '../../main.css';
+
+
 const mapStateToProps = state => {
-    return { game: {...state.game}, settings: {...state.settings} };
+
+    return { game: {...state.game}, gameSettings: {...state.gameSettings} };
 };
+
 const mapDispatchToProps = dispatch => {
+
     return {
         processLeftClick: (x, y) => dispatch(processLeftClick({x, y})),
         processRightClick: (x, y) => dispatch(processRightClick({x, y})),
     };
 };
+
 class ConnectedField extends Component{
 
-    constructor(){
+    constructor() {
+
         super();
-        this.state = {
-        };
     }
 
-    componentDidMount(){
-    }
-    componentWillUnmount(){
-    }
-    getFieldBycoordinates(fields, x, y) {
-        return fields && fields.length && fields.find(field => field.x === x && field.y === y);
-    }
     handleClick(x, y) {
+
+        // process left mouse click
         this.props.processLeftClick(x, y);
     }
+
     handleContextMenu(x, y, event) {
+
+        // preventing context menu
         event.preventDefault();
+
+        // process right mouse click
         this.props.processRightClick(x, y);
     }
+
     createField() {
 
-        const { game, settings } = this.props;
+        const { game, gameSettings } = this.props;
 
         let rows = [];
 
         // Outer loop to create parent
-        for (let x = 0; x < settings.x; x++) {
+        for (let x = 0; x < gameSettings.x; x++) {
             let cell = [];
+
             //Inner loop to create children
-            for (let y = 0; y < settings.y; y++) {
-                const field = this.getFieldBycoordinates(game.fields, x, y);
-                // console.log (field)
+            for (let y = 0; y < gameSettings.y; y++) {
+
+                const field = getFieldByCoordinates(game.fields, x, y);
+
                 const classBomb = field && field.isBomb ? 'field-bomb' : '';
                 const classOpened = field && field.isOpened ? 'field-opened' : '';
                 const classFlag = field && field.isFlag ? 'field-flag' : '';
@@ -54,16 +63,29 @@ class ConnectedField extends Component{
                 const classQuestion = field && field.isQestion ? 'field-question' : '';
                 const fieldNumber = field && field.isOpened && field.number || '';
 
-                cell.push(<div className={`cell ${classBomb} ${classOpened} ${classFlag} ${fieldFlagWrong} ${classQuestion} ${x + ' ' + y}`} key={(x+y).toString()} onClick={this.handleClick.bind(this, x, y)} onContextMenu={this.handleContextMenu.bind(this, x, y)}>{fieldNumber}</div>)
+                cell.push(
+                    <div
+                        key={(x+y).toString()}
+                        className={`cell ${classBomb} ${classOpened} ${classFlag} ${fieldFlagWrong} ${classQuestion} ${x + ' ' + y}`}
+                        onClick={this.handleClick.bind(this, x, y)}
+                        onContextMenu={this.handleContextMenu.bind(this, x, y)}>
+
+                        {fieldNumber}
+                    </div>
+                )
             }
+
             //Create the parent and add the children
             rows.push(<div key={x.toString()} className="row">{cell}</div>)
         }
+
         return rows
     }
+
     render() {
-        const { game, settings } = this.props;
-        console.log ('render', game.started, game.finished);
+
+        const { game } = this.props;
+
         return (
             <div className={'field' + (game.started ? ' game-started' : '') + (game.finished ? ' game-finished' : '')}>
                 {this.createField()}

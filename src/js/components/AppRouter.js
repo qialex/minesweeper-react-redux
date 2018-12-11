@@ -2,7 +2,7 @@
 import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 import App from "./App";
-import Settings from "./Settings";
+import Settings from "./settings/Settings";
 
 const AppRouter = () => (
     <BrowserRouter>

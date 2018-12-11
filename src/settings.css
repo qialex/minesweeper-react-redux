@@ -13,4 +13,21 @@
 .setting-panel {
     width: 20em;
     background-color: white;
+    position: relative;
+}
+
+.settings-panel-close {
+    width: 1.5em;
+    height: 1.5em;
+    position: absolute;
+    right: 0;
+    display: block;
+}
+.settings-panel-close:after {
+    content: 'x';
+    width: 1.5em;
+    height: 1.5em;
+    position: absolute;
+    border: 1px solid;
+    border-radius: 100%;
 }
