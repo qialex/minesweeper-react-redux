@@ -2,10 +2,10 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import connect from "react-redux/es/connect/connect";
-import {resetGame, updateGameTime} from "../actions/index";
-import Field from "./Field";
-import L from "../localization/Localization";
-import '../../index.scss';
+import {resetGame, updateGameTime} from "../../actions/index";
+import Field from "../Field";
+import L from "../../localization/Localization";
+import './game.scss';
 
 
 const mapStateToProps = state => {
@@ -77,19 +77,26 @@ class ConnectedGame extends Component{
         const bombsLeft = gameSettings.bombs - game.flags;
 
         return (
-            <div className="game">
-                <div className="settings">
-                    <Link to="/settings/">{L.settings}</Link>
-                </div>
-                <div className="control-panel">
-                    {bombsLeft}
-                    <button type="submit" className="btn btn-success btn-lg" onClick={this.handleNewGameClick.bind(this)}>
-                    </button>
-                    {game.time}
-                </div>
-                <div className="field-wrapper">
-                    {game.won ? 'WON!' : ''}
-                    <Field />
+            <div className="main-wrapper">
+                <div className="game">
+                    <div className="settings">
+                        <Link to="/settings/">{L.settings}</Link>
+                    </div>
+                    <div className="control-panel">
+                        <div className="mines-left">
+                            {bombsLeft}
+                        </div>
+                        <div className="main-button">
+                            <button type="submit" className={game.won ? 'game-won' : ''} onClick={this.handleNewGameClick.bind(this)}>
+                            </button>
+                        </div>
+                        <div className="time-display">
+                            {game.time}
+                        </div>
+                    </div>
+                    <div className="field-wrapper">
+                        <Field />
+                    </div>
                 </div>
             </div>
         )

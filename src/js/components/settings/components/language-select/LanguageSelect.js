@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import connect from "react-redux/es/connect/connect";
 import {globalChangeLanguage} from "../../../../actions/index";
 import L from "../../../../localization/Localization";
+import './languageSelect.scss';
 
 
 const mapStateToProps = state => {

@@ -1,0 +1,102 @@
+
+.main-wrapper {
+  display: flex;
+  justify-content: center;
+}
+.game {
+  display: flex;
+  flex-direction: column;
+  background-color: #c5c5c5;
+
+  .settings, .control-panel {
+    padding: 0.1em;
+  }
+
+  .settings {
+    border-bottom: 1px solid darkslategrey;
+    a {
+      text-decoration: none;
+      color: initial;
+    }
+  }
+
+  .control-panel {
+    display: flex;
+    align-content: normal;
+    justify-content: space-between;
+    align-items: stretch;
+    > div {
+      flex-grow: 1;
+      flex-basis: 0;
+      text-align: center;
+      &:first-child {
+        text-align: left;
+      }
+      &:last-child {
+        text-align: right;
+      }
+    }
+
+    .main-button {
+      button {
+        height: 1em;
+        background-color: red;
+        position: relative;
+        top: -0.1em;
+
+        &.game-won {
+          background-color: darkgreen;
+        }
+      }
+    }
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.cell {
+  background-color: gray;
+  width: 1em;
+  height: 1em;
+  text-align: center;
+  border: 1px solid darkgray;
+}
+
+.field-flag:before {
+  content: '!';
+}
+.field-question:before {
+  content: '?';
+}
+.field-flag-wrong:after {
+  content: 'X';
+  color: yellow;
+}
+.field-flag:before, .field-question:before, .field-flag-wrong:after {
+  width: 1em;
+  height: 1em;
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  position: absolute;
+}
+
+.game-finished .field-bomb {
+  background-color: darkred;
+}
+
+.game-finished .field-bomb.field-opened {
+  background-color: red;
+}
+
+.field-opened {
+  background-color: white;
+}

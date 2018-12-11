@@ -130,7 +130,7 @@ class ConnectedSettings extends Component {
             const presetString = gameSettings.getPresetString(preset.code);
 
             return (
-                <div className="radio" key={preset.code}>
+                <div className="form-group" key={preset.code}>
                     <label>
                         <input
                             name="gameSettings"
@@ -168,18 +168,16 @@ class ConnectedSettings extends Component {
                 <div className="setting-panel">
                     <div className="settings-panel-close"  onClick={this._goToHomePage}>
                     </div>
-                    <div>
+                    <div className="language-wrapper">
                         <LanguageSelect />
                     </div>
-                    <div>
-                        <form>
-                            {radioOptions}
-                        </form>
+                    <div className="radio-buttons-wrapper">
+                        {radioOptions}
                     </div>
-                    <div>
+                    <div className="sliders-wrapper">
                         {sliders}
                     </div>
-                    <div>
+                    <div className="buttons-group">
                         <button onClick={this._goToHomePage}>
                             {L.close}
                         </button>
