@@ -1,8 +1,8 @@
 // src/js/components/settings/LanguageSelect.jsect.js
 import React, {Component} from "react";
 import connect from "react-redux/es/connect/connect";
-import {globalChangeLanguage} from "../../actions/index";
-import L from "../../localization/Localization";
+import {globalChangeLanguage} from "../../../../actions/index";
+import L from "../../../../localization/Localization";
 
 
 const mapStateToProps = state => {

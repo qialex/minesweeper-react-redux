@@ -53,10 +53,12 @@ class GameSettings {
             .map(index => this._constants.publicProps[index].code)
     }
     
-    _maxBombs() {
+    _maxBombs(props = false) {
+
+        props = props || this;
 
         return this._sizeProps()
-                .map(prop => this[prop])
+                .map(prop => props[prop])
                 .reduce((p, current) => p * current, 1)
                 - 1;
     }
@@ -91,6 +93,33 @@ class GameSettings {
         this._validateProps();
     }
 
+    checkPossibleValue(property, value) {
+
+        // doing new values set
+        const props = {...this.getData(), [property]: value};
+
+        Object.keys(props).filter(prop => {
+
+            const minmax = this.getMinMax(prop, props);
+
+            if (!props[prop]) {
+
+                throw new Error(`GameSettings prop ${prop} (${props[prop]}) is not valid`);
+
+            } else if (props[prop] < minmax.min) {
+
+                props[prop] = minmax.min;
+
+            } else if (props[prop] > minmax.max) {
+
+                props[prop] = minmax.max;
+
+            }
+        });
+
+        return props;
+    }
+
     getData() {
 
         return this.getPublicProps()
@@ -107,14 +136,14 @@ class GameSettings {
         return this._constants.publicProps.find(obj => obj.code === prop);
     }
 
-    getMinMax(prop) {
+    getMinMax(prop, props = false) {
 
         if (~(this._sizeProps().indexOf(prop))) {
 
             return {min: this._constants.minFieldSize, max: this._constants.maxFieldSize}
         } else {
 
-            return {min: this._constants.minBombs, max: this._maxBombs()}
+            return {min: this._constants.minBombs, max: this._maxBombs(props)}
         }
     }
 

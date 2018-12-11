@@ -4,9 +4,9 @@ import { connect } from "react-redux";
 import { changeGameSettings } from "../../actions/index";
 import {Redirect} from "react-router-dom";
 import L from "../../localization/Localization";
-import LanguageSelect from "./LanguageSelect";
-import Slider from "./Slider";
-import '../../../settings.css';
+import LanguageSelect from "./components/language-select/LanguageSelect";
+import Slider from "./components/slider/Slider";
+import './settings.scss';
 import GameSettings from "../../models/GameSettings";
 
 
@@ -85,7 +85,7 @@ class ConnectedSettings extends Component {
     handleValueChanged(property, value) {
 
         // doing new values set
-        const props = {...this.state.gameSettings.getData(), [property]: value};
+        const props = this.state.gameSettings.checkPossibleValue(property, value);
 
         // new gameSettings
         const gameSettings = new GameSettings(props);

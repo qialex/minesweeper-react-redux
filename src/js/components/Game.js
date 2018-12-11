@@ -5,7 +5,7 @@ import connect from "react-redux/es/connect/connect";
 import {resetGame, updateGameTime} from "../actions/index";
 import Field from "./Field";
 import L from "../localization/Localization";
-import '../../main.css';
+import '../../index.scss';
 
 
 const mapStateToProps = state => {

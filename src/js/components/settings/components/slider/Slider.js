@@ -1,6 +1,6 @@
-// src/js/components/settings/Slider.js
+// src/js/components/settings/slider/Slider.js
 import React, { Component } from "react";
-import '../../../slider.css';
+import './slider.scss';
 
 const addEventListenerOnceOptions = {once: true};
 
@@ -100,7 +100,7 @@ class Slider extends Component {
     handleValueFieldChange(event) {
 
         const { min, max } = this.props;
-        let value = event.target.value;
+        let value = +event.target.value;
 
         // checking value for min and max
         value = value < min ? min : value;
@@ -141,6 +141,7 @@ class Slider extends Component {
     handleMouseMove(nativeEvent) {
         const x = nativeEvent.x;
         const { dragStartX, sliderLineWidth } = this.state;
+        const { min, max } = this.props;
 
         // if mouse moved
         if (x && dragStartX) {
@@ -152,15 +153,30 @@ class Slider extends Component {
             const minShift = -this._calculateCurrentValueToMargin();
             const maxShift = sliderLineWidth + minShift;
 
-            if (shift < minShift){
-                shift = Math.floor(minShift);
-            }
-            if (shift > maxShift){
-                shift = Math.floor(maxShift);
-            }
+            // newCurrentValue
+            let newCurrentValue;
 
-            // calculating new currentValue
-            const newCurrentValue = this._calculateShiftToValue(shift);
+            if (shift < minShift){
+
+                // set minShift as shift
+                shift = minShift;
+
+                // set newCurrentValue as max
+                newCurrentValue = min;
+
+            } else if (shift > maxShift){
+
+                // set maxShift as shift
+                shift = maxShift;
+
+                // set newCurrentValue as min
+                newCurrentValue = max;
+
+            } else {
+
+                // calculating new currentValue
+                newCurrentValue = this._calculateShiftToValue(shift);
+            }
 
             // setting new currentValue
             this.setState({currentValue: newCurrentValue, shift: shift});
@@ -189,19 +205,25 @@ class Slider extends Component {
             marginLeft: `calc( ${this._calculateCurrentValueToMargin()}px + ${shift}px )`,
         };
 
+        // input style to fit content
+        const inputStyle = {
+            width: `${currentValue.toString().length * 0.5 + 1.4}em`,
+        };
+
         return (
             <div className="slider-wrapper">
-                <div>{min}</div>
+                <div className="slider-min-max">{min}</div>
                 <div ref={this.sliderLine} className="slider-line" onClick={this.handleSliderLineClick}>
                     <div className="slider-dot" style={dotStyle} onMouseDownCapture={this.handleMouseDownCapture}>
                     </div>
                 </div>
-                <div>{max}</div>
-                <div>
+                <div className="slider-min-max">{max}</div>
+                <div className="slider-input-wrapper">
                     <input
                         className="slider-input"
                         type="number"
                         id="currentValue"
+                        style={inputStyle}
                         value={currentValue}
                         onChange={this.handleValueFieldChange}
                     />

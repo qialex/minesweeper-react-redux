@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import connect from "react-redux/es/connect/connect";
 import { processLeftClick, processRightClick } from "../actions";
 import { getFieldByCoordinates } from '../utils/utils';
-import '../../main.css';
+import '../../index.scss';
 
 
 const mapStateToProps = state => {
