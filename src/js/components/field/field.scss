@@ -1,0 +1,84 @@
+
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: paleturquoise;
+    width: 1em;
+    height: 1em;
+    border: 1px solid darkgray;
+    padding: 0.1em;
+
+    &[data-number="1"] {
+      color: darkslateblue;
+    }
+    &[data-number="2"] {
+      color: forestgreen;
+    }
+    &[data-number="3"] {
+      color: rgba(232, 32, 20, 0.91);
+    }
+    &[data-number="4"] {
+      color: rebeccapurple;
+    }
+    &[data-number="5"] {
+      color: orange;
+    }
+    &[data-number="6"] {
+      color: lightslategray;
+    }
+    &[data-number="7"] {
+      color: palevioletred;
+    }
+    &[data-number="8"] {
+      color: sienna;
+    }
+
+    &.tile-opened {
+      background-color: white;
+    }
+
+    &.tile-bomb {
+      background-image: url("../../../themes/qi/naval-mine.png");
+      background-size: contain;
+      &.tile-opened {
+        background-image: url("../../../themes/qi/explosion.png");
+      }
+    }
+
+    &.tile-flag:before {
+      content: '';
+      background-image: url("../../../themes/qi/flag.png");
+      background-size: contain;
+    }
+    &.tile-question:before {
+      content: '';
+      background-image: url("../../../themes/qi/question-mark.png");
+      // background-image: url("../../../themes/qi/question-2.png");
+      background-size: contain;
+    }
+    &.tile-flag-wrong:after {
+      content: '';
+      background-image: url("../../../themes/qi/x.png");
+      background-size: contain;
+    }
+    &.tile-flag:before, &.tile-question:before, &.tile-flag-wrong:after {
+      width: 1em;
+      height: 1em;
+      display: block;
+      text-align: center;
+      font-weight: bold;
+      position: absolute;
+    }
+  }
+}

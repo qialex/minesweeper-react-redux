@@ -3,10 +3,15 @@ import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import connect from "react-redux/es/connect/connect";
 import {resetGame, updateGameTime} from "../../actions/index";
-import Field from "../Field";
+import Field from "../field/Field";
 import L from "../../localization/Localization";
 import './game.scss';
 
+const mainButtonIconsNumbers = {
+    positive: 5,
+    negative: 6,
+    promising: 2,
+};
 
 const mapStateToProps = state => {
 
@@ -23,13 +28,22 @@ const mapDispatchToProps = dispatch => {
 
 class ConnectedGame extends Component{
 
+    static getRandomIconNumber(type) {
+        return 1 + ( Math.random() * mainButtonIconsNumbers[type] ) << 0
+    }
+
     constructor(){
 
         super();
 
         this.state = {
             timer: null,
+            isMouseDown: false
         };
+
+        this.handleNewGameClick = this.handleNewGameClick.bind(this);
+        this.handleGameMouseDown = this.handleGameMouseDown.bind(this);
+        this.handleGameMouseUp = this.handleGameMouseUp.bind(this);
     }
 
     componentWillMount() {
@@ -71,32 +85,58 @@ class ConnectedGame extends Component{
         this.props.resetGame();
     }
 
+    handleGameMouseDown() {
+
+        const { game } = this.props;
+
+        if (!game.finished) {
+
+            this.setState({isMouseDown: true});
+        }
+    }
+
+    handleGameMouseUp() {
+
+        const { game } = this.props;
+
+        if (!game.finished) {
+
+            this.setState({isMouseDown: false});
+        }
+    }
+
     render() {
 
+        const { isMouseDown } = this.state;
         const { game, gameSettings } = this.props;
         const bombsLeft = gameSettings.bombs - game.flags;
 
-        const mainButtonClass = game.won ? 'game-won' : game.finished ? 'game-lost' : '';
+        const mainButtonClass = game.won ? `icon-positive-${ConnectedGame.getRandomIconNumber('positive')}`
+            : game.finished ? `icon-negative-${ConnectedGame.getRandomIconNumber('negative')}`
+                : isMouseDown ? `icon-promising-${ConnectedGame.getRandomIconNumber('promising')}`
+                    : '';
 
         return (
             <div className="main-wrapper">
                 <div className="game">
-                    <div className="settings">
-                        <Link to="/settings/">{L.settings}</Link>
-                    </div>
                     <div className="control-panel">
-                        <div className="mines-left">
-                            {bombsLeft}
+                        <div className="settings">
+                            <Link to="/settings/">{L.settings}</Link>
                         </div>
-                        <div className="main-button">
-                            <button type="submit" className={mainButtonClass} onClick={this.handleNewGameClick.bind(this)}>
-                            </button>
-                        </div>
-                        <div className="time-display">
-                            {game.time}
+                        <div className="game-panel">
+                            <div className="mines-left">
+                                {bombsLeft}
+                            </div>
+                            <div className="main-button">
+                                <div className={mainButtonClass} onClick={this.handleNewGameClick}>
+                                </div>
+                            </div>
+                            <div className="time-display">
+                                {game.time}
+                            </div>
                         </div>
                     </div>
-                    <div className="field-wrapper">
+                    <div className="field-wrapper" onMouseDown={this.handleGameMouseDown} onMouseUp={this.handleGameMouseUp}>
                         <Field />
                     </div>
                 </div>

@@ -131,15 +131,19 @@ class ConnectedSettings extends Component {
 
             return (
                 <div className="form-group" key={preset.code}>
-                    <label>
-                        <input
-                            name="gameSettings"
-                            type="radio"
-                            checked={checked}
-                            onChange={() => {this.handleRadioChanged(preset)}} />
+                    <div className="container">
+                        <label>
+                            <input
+                                name="gameSettings"
+                                type="radio"
+                                checked={checked}
+                                onChange={() => {this.handleRadioChanged(preset)}} />
 
-                        {L[preset.L_key]} {presetString ? ` — ${presetString}` : ``}
-                    </label>
+                            {L[preset.L_key]} {presetString ? ` — ${presetString}` : ``}
+
+                            <span className="checkmark"></span>
+                        </label>
+                    </div>
                 </div>
             )
         });
@@ -181,7 +185,7 @@ class ConnectedSettings extends Component {
                         <button onClick={this._goToHomePage}>
                             {L.close}
                         </button>
-                        <button type="submit" onClick={this.handleSave}>
+                        <button className="button-green" onClick={this.handleSave}>
                             {L.save}
                         </button>
                     </div>

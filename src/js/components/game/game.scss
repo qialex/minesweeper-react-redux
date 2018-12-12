@@ -1,106 +1,106 @@
-
 .main-wrapper {
   display: flex;
-}
-.game {
-  display: flex;
-  flex-direction: column;
-  background-color: #c5c5c5;
-  margin: auto;
+  user-select: none;
 
-  .settings, .control-panel {
-    padding: 0.1em;
-  }
-
-  .settings {
-    border-bottom: 1px solid darkslategrey;
-    a {
-      text-decoration: none;
-      color: initial;
-    }
-  }
-
-  .control-panel {
+  .game {
     display: flex;
-    align-content: normal;
-    justify-content: space-between;
-    align-items: stretch;
-    > div {
-      flex-grow: 1;
-      flex-basis: 0;
-      text-align: center;
-      &:first-child {
-        text-align: left;
-      }
-      &:last-child {
-        text-align: right;
-      }
-    }
+    flex-direction: column;
+    background-color: palevioletred;
+    margin: auto;
+    color: antiquewhite;
+    border-style: dashed;
 
-    .main-button {
-      button {
-        height: 1em;
-        background-color: grey;
-        position: relative;
-        top: -0.1em;
+    .control-panel {
+      padding: 0.1em 0.2em;
 
-        &.game-lost {
-          background-color: red;
+      .settings {
+        font-size: 0.8em;
+        margin-bottom: 0.1em;
+        a {
+          color: inherit;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
+      .game-panel {
+        display: flex;
+        align-content: normal;
+        justify-content: space-between;
+        align-items: stretch;
+        > div {
+          flex-grow: 1;
+          flex-basis: 0;
+          text-align: center;
+          &:first-child {
+            text-align: left;
+            position: relative;
+            top: 0.11em;
+          }
+          &:last-child {
+            text-align: right;
+            position: relative;
+            top: 0.11em;
+          }
         }
 
-        &.game-won {
-          background-color: darkgreen;
+        .main-button {
+          div {
+            width: 1.25em;
+            height: 1.25em;
+            margin: auto;
+            cursor: pointer;
+            background-image: url("../../../themes/qi/smile-neutral-1.png");
+            background-size: contain;
+
+            &.icon-positive-1 {
+              background-image: url("../../../themes/qi/smile-positive-1.png");
+            }
+            &.icon-positive-2 {
+              background-image: url("../../../themes/qi/smile-positive-2.png");
+            }
+            &.icon-positive-3 {
+              background-image: url("../../../themes/qi/smile-positive-3.png");
+            }
+            &.icon-positive-4 {
+              background-image: url("../../../themes/qi/smile-positive-4.png");
+            }
+            &.icon-positive-5 {
+              background-image: url("../../../themes/qi/smile-positive-5.png");
+            }
+
+            &.icon-negative-1 {
+              background-image: url("../../../themes/qi/smile-negative-1.png");
+            }
+            &.icon-negative-2 {
+              background-image: url("../../../themes/qi/smile-negative-2.png");
+            }
+            &.icon-negative-3 {
+              background-image: url("../../../themes/qi/smile-negative-3.png");
+            }
+            &.icon-negative-4 {
+              background-image: url("../../../themes/qi/smile-negative-4.png");
+            }
+            &.icon-negative-5 {
+              background-image: url("../../../themes/qi/smile-negative-5.png");
+            }
+            &.icon-negative-6 {
+              background-image: url("../../../themes/qi/smile-negative-6.png");
+            }
+
+            &.icon-promising-1 {
+              background-image: url("../../../themes/qi/smile-promising-1.png");
+            }
+            &.icon-promising-2 {
+              background-image: url("../../../themes/qi/smile-promising-2.png");
+            }
+            &.icon-promising-3 {
+              background-image: url("../../../themes/qi/smile-promising-3.png");
+            }
+          }
         }
       }
     }
   }
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-}
-
-.cell {
-  background-color: gray;
-  width: 1em;
-  height: 1em;
-  text-align: center;
-  border: 1px solid darkgray;
-}
-
-.field-flag:before {
-  content: '!';
-}
-.field-question:before {
-  content: '?';
-}
-.field-flag-wrong:after {
-  content: 'X';
-  color: yellow;
-}
-.field-flag:before, .field-question:before, .field-flag-wrong:after {
-  width: 1em;
-  height: 1em;
-  display: block;
-  text-align: center;
-  font-weight: bold;
-  position: absolute;
-}
-
-.game-finished .field-bomb {
-  background-color: darkred;
-}
-
-.game-finished .field-bomb.field-opened {
-  background-color: red;
-}
-
-.field-opened {
-  background-color: white;
 }
