@@ -149,7 +149,7 @@ class Slider extends Component {
             // mouse distance in pixels
             let shift = x - dragStartX;
 
-            // preventing placing .slider-dot out of .slider-line
+            // preventing placing .slider-dot out of .slider-line-wrapper
             const minShift = -this._calculateCurrentValueToMargin();
             const maxShift = sliderLineWidth + minShift;
 
@@ -205,6 +205,11 @@ class Slider extends Component {
             marginLeft: `calc( ${this._calculateCurrentValueToMargin()}px + ${shift}px )`,
         };
 
+        //
+        const sliderLineActiveStyle = {
+            width: dotStyle.marginLeft,
+        };
+
         // input style to fit content
         const inputStyle = {
             width: `${currentValue.toString().length * 0.5 + 1.4}em`,
@@ -213,9 +218,14 @@ class Slider extends Component {
         return (
             <div className="slider-wrapper">
                 <div className="slider-min-max">{min}</div>
-                <div ref={this.sliderLine} className="slider-line" onClick={this.handleSliderLineClick}>
-                    <div className="slider-dot" style={dotStyle} onMouseDownCapture={this.handleMouseDownCapture}>
+                <div ref={this.sliderLine} className="slider-line-wrapper" onClick={this.handleSliderLineClick}>
+                    <div className="slider-line">
+                        <div className="slider-line-active" style={sliderLineActiveStyle}>
+                        </div>
+                        <div className="slider-dot" style={dotStyle} onMouseDownCapture={this.handleMouseDownCapture}>
+                        </div>
                     </div>
+
                 </div>
                 <div className="slider-min-max">{max}</div>
                 <div className="slider-input-wrapper">

@@ -10,11 +10,14 @@
   justify-content: center;
 
   .setting-panel {
+    font-size: .9em;
     width: 20em;
     padding: 1em;
     position: relative;
     background-color: paleturquoise;
-    color: palevioletred;
+    color: #a94766fc;
+    border: 0.1em dotted;
+    border-radius: 0.1em;
 
     .radio-buttons-wrapper {
       @import "_radioButton";
@@ -23,18 +26,22 @@
     .language-wrapper {
       margin: 0.25em 0 2em;
       select {
-        font-size: 1em;
+        font-family: monospace;
+        text-transform: capitalize;
+        font-size: .9em;
         background-color: paleturquoise;
-        color: palevioletred;
+        color: #a94766fc;
       }
     }
 
     .form-group {
-      margin: 0.5em 0;
+
+      margin: 1em 0;
     }
 
     .sliders-wrapper {
-      margin-left: 1.35em;
+      margin-left: 1.8em;
+
     }
 
     .buttons-group {
@@ -42,6 +49,7 @@
       text-align: center;
 
       button {
+        font-size: .9em;
         background-color: #c3c3c375;
         border: 0;
         outline: 0;
@@ -49,13 +57,15 @@
         padding: 0.325em 0.5em;
         cursor: pointer;
         margin: 0 .25em;
-        font-size: 1em;
-
+        color: #000000db;
+        opacity: 0.75;
         &:hover {
-          background-color: rgba(191, 191, 191, 0.56);
+          // background-color: rgba(191, 191, 191, 0.56);
+          opacity: 1;
         }
         &.button-green {
-          background-color: yellowgreen;
+          background-color: cadetblue;
+          color: aliceblue;
         }
       }
     }
@@ -69,7 +79,7 @@
       display: block;
       transform: rotate(45deg);
       cursor: pointer;
-      color: darkgrey;
+      color: #000000db;
 
       &:after {
         content: '+';
@@ -78,6 +88,7 @@
         position: absolute;
         font-size: 1.5em;
         text-align: center;
+        opacity: 0.5;
       }
     }
   }
