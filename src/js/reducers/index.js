@@ -123,6 +123,15 @@ const rootReducer = (state = initialState, action) => {
 
                 if (checkIfGameWon(game.fields)) {
 
+                    game.fields.map(field => {
+
+                        // placing flag on all fields
+                        if (field.isBomb && !field.isFlag) {
+                            field.isQuestion = false;
+                            field.isFlag = true;
+                        }
+                    });
+
                     // if game is won
                     game.finished = true;
                     game.won = true;

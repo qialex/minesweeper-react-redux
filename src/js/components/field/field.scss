@@ -9,6 +9,10 @@
     flex-direction: row;
   }
 
+  &.mouse-downed .tile:not(.tile-opened):not(.tile-question):not(.tile-flag):hover {
+    background-color: lightblue;
+  }
+
   .tile {
     display: flex;
     justify-content: center;

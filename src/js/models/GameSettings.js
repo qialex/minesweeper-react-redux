@@ -20,7 +20,7 @@ const ConstGameSettings = {
     ],
     sizeProps: [0, 1],
     minFieldSize: 2,
-    maxFieldSize: 99,
+    maxFieldSize: 32,
     minBombs: 1,
     presets: [
         {
