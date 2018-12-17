@@ -35,7 +35,7 @@ describe('actions', () => {
 
     it('should create an action to change game settings game', () => {
 
-        const gameSettings = new GameSettings().getData();
+        const gameSettings = new GameSettings().props;
 
         const expectedAction = {
             type: MINESWEEPER.CHANGE_GAME_SETTINGS,

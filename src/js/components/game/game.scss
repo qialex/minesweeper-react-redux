@@ -1,8 +1,10 @@
 .main-wrapper {
+
   display: flex;
   user-select: none;
 
   .game {
+
     display: flex;
     flex-direction: column;
     background-color: palevioletred;
@@ -11,34 +13,47 @@
     border-style: dashed;
 
     .control-panel {
+
       padding: 0.1em 0.2em;
 
       .settings {
+
         font-size: 0.8em;
         margin-bottom: 0.1em;
+
         a {
+
           color: inherit;
+
           &:hover {
+
             text-decoration: none;
           }
         }
       }
 
       .game-panel {
+
         display: flex;
         align-content: normal;
         justify-content: space-between;
         align-items: stretch;
+
         > div {
+
           flex-grow: 1;
           flex-basis: 0;
           text-align: center;
+
           &:first-child {
+
             text-align: left;
             position: relative;
             top: 0.11em;
           }
+
           &:last-child {
+
             text-align: right;
             position: relative;
             top: 0.11em;
@@ -46,7 +61,9 @@
         }
 
         .main-button {
+
           div {
+
             width: 1.25em;
             height: 1.25em;
             margin: auto;

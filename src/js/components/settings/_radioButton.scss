@@ -7,7 +7,6 @@
   * {
     cursor: pointer;
   }
-  // font-size: 22px;
   user-select: none;
 }
 
@@ -50,13 +49,3 @@
 .container input:checked ~ .checkmark:after {
   display: block;
 }
-
-/* Style the indicator (dot/circle) */
-//.container .checkmark:after {
-//  top: 9px;
-//  left: 9px;
-//  width: 8px;
-//  height: 8px;
-//  border-radius: 50%;
-//  background: antiquewhite;
-//}

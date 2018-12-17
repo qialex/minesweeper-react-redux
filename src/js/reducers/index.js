@@ -10,7 +10,7 @@ export const initialState = {
     globalSettings: {
         language: L.getLanguage(),
     },
-    gameSettings: new GameSettings().getData(),
+    gameSettings: new GameSettings().props,
     game: {
         fields: undefined,
         time: 0,

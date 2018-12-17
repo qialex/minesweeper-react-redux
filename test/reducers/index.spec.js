@@ -7,13 +7,13 @@ import GameSettings from "../../src/js/models/GameSettings";
 describe('rootReducer', () => {
     it('should return the initial state', () => {
 
-        const gameSettings = new GameSettings().getData();
+        const gameSettings = new GameSettings().props;
 
         const initState = {
             globalSettings: {
                 language: L.getLanguage(),
             },
-            gameSettings: new GameSettings().getData(),
+            gameSettings: new GameSettings().props,
             game: {
                 fields: undefined,
                 time: 0,

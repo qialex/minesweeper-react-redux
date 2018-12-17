@@ -58,7 +58,7 @@ class ConnectedSettings extends Component {
         const gameSettings = new GameSettings(this.props.gameSettings);
 
         // setting gameSettings and selectedPreset
-        this.setState({gameSettings: gameSettings, selectedPreset: gameSettings.getPreset()});
+        this.setState({gameSettings: gameSettings, selectedPreset: gameSettings.preset});
     }
 
     handleSave() {
@@ -85,21 +85,38 @@ class ConnectedSettings extends Component {
     handleValueChanged(property, value) {
 
         // doing new values set
-        const props = this.state.gameSettings.checkPossibleValue(property, value);
+        const props = {...this.state.gameSettings.props, [property]: value};
 
         // new gameSettings
-        const gameSettings = new GameSettings(props);
+        const newGameSettings = new GameSettings(props);
 
-        // saving gameSettings
-        this.setState({gameSettings});
+        // checking validation
+        const validation = newGameSettings.validation;
+
+        if (!validation.length) {
+
+            // saving gameSettings if values are valid
+            this.setState({gameSettings: newGameSettings});
+
+        } else {
+
+            // looping invalid props
+            validation.map(report => {
+
+                // setting values in min max range
+                props[report.prop] = Math.min(props[report.prop], report.max);
+                props[report.prop] = Math.max(props[report.prop], report.min);
+            });
+
+            // saving gameSettings with validated props
+            this.setState({gameSettings: new GameSettings(props)});
+        }
     }
 
     handleRadioChanged(preset) {
 
-        const { gameSettings } = this.state;
-
         // getting newProps from preset
-        const newProps = gameSettings.getPresetProps(preset.code);
+        const newProps = preset.props;
 
         if (newProps) {
 
@@ -123,11 +140,11 @@ class ConnectedSettings extends Component {
         const { gameSettings, selectedPreset } = this.state;
 
         // radio options
-        const radioOptions = gameSettings.getPresets().map(preset => {
+        const radioOptions = gameSettings.presets.map(preset => {
 
             const checked = selectedPreset.code === preset.code;
 
-            const presetString = gameSettings.getPresetString(preset.code);
+            const props = preset.props ? Object.values(preset.props) : preset.props;
 
             return (
                 <div className="form-group" key={preset.code}>
@@ -139,7 +156,9 @@ class ConnectedSettings extends Component {
                                 checked={checked}
                                 onChange={() => {this.handleRadioChanged(preset)}} />
 
-                            {L[preset.L_key]} {presetString ? ` — ${presetString}` : ``}
+                            {L[preset.L_key]} {props && (
+                                <span className="no-capitalize">— <b>{props[0]}</b>x<b>{props[1]}</b>, {L['settings_field_bombs_count']}: <b>{props[2]}</b></span>
+                                )}
 
                             <span className="checkmark"></span>
                         </label>
@@ -149,20 +168,18 @@ class ConnectedSettings extends Component {
         });
 
         // sliders for the custom settings
-        const sliders = this._isDisplayCustomSettings() && gameSettings.getPublicProps().map(prop => {
-            
-            const minmax = gameSettings.getMinMax(prop);
+        const sliders = this._isDisplayCustomSettings() && gameSettings.publicProps.map(prop => {
 
-            const propObj = gameSettings.getPublicProp(prop);
-            
+            const minmax = gameSettings.minmax[prop.code];
+
             return (
-                <div className="form-group" key={prop}>
-                    <label>{L[propObj.L_key]}</label>
+                <div className="form-group" key={prop.code}>
+                    <label>{L[prop.L_key]}</label>
                     <Slider
                         min={minmax.min}
                         max={minmax.max}
-                        value={gameSettings[prop]}
-                        onValueChanged={this.handleValueChanged.bind(this, prop)} />
+                        value={gameSettings[prop.code]}
+                        onValueChanged={this.handleValueChanged.bind(this, prop.code)} />
                 </div>
             )
         });

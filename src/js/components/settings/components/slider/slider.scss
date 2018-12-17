@@ -1,6 +1,5 @@
-
-
 .slider-wrapper {
+
   width: 100%;
   height: 2em;
   display: flex;
@@ -8,6 +7,7 @@
   user-select: none;
 
   .slider-line-wrapper {
+
     width: 100%;
     height: .075em;
     background-color: transparent;
@@ -17,10 +17,12 @@
     margin: 0.25em;
 
     .slider-line {
+
       background-color: azure;
       height: 3px;
 
       .slider-line-active {
+
         background-color: cadetblue;
         height: 3px;
       }
@@ -41,14 +43,17 @@
   }
 
   .slider-min-max {
+
     font-size: 0.75em;
   }
 
   .slider-input-wrapper {
+
     text-align: center;
     width: 7em;
 
     .slider-input {
+
       font-size: 1em;
       color: #a94766fc;
       background: transparent;
@@ -58,13 +63,10 @@
       opacity: 0.9;
 
       &:focus {
+
         opacity: 1;
         outline: none;
       }
     }
   }
-
 }
-
-
-

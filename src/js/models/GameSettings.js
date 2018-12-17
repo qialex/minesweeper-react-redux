@@ -1,6 +1,4 @@
 // src/js/models/GameSettings.js
-
-import L from "../localization/Localization";
 import React from "react";
 
 const ConstGameSettings = {
@@ -24,18 +22,18 @@ const ConstGameSettings = {
     minBombs: 1,
     presets: [
         {
+            _props: [8, 8, 10],
             code:  'beginner',
-            props: [8, 8, 10],
             L_key: 'settings_beginner',
         },
         {
+            _props: [16, 16, 40],
             code:  'intermediate',
-            props: [16, 16, 40],
             L_key: 'settings_intermediate',
         },
         {
+            _props: [16, 30, 99],
             code: 'expert',
-            props: [16, 30, 99],
             L_key: 'settings_expert',
         },
         {
@@ -45,163 +43,130 @@ const ConstGameSettings = {
     ]
 };
 
+ConstGameSettings.presets.map(preset => {
+    Object.defineProperty(preset, 'props', {
+        get: () => {
+            return !preset._props ? null : preset._props
+                .reduce((result, current, i) => ({...result, [ConstGameSettings.publicProps[i].code]: current}), {});
+        }
+    })
+});
+
 class GameSettings {
 
-    _sizeProps() {
+    _getMinMax(prop) {
 
-        return this._constants.sizeProps
-            .map(index => this._constants.publicProps[index].code)
-    }
-    
-    _maxBombs(props = false) {
-
-        props = props || this;
-
-        return this._sizeProps()
-                .map(prop => props[prop])
-                .reduce((p, current) => p * current, 1)
-                - 1;
-    }
-
-    _validateProps() {
-
-        const props = this.getData();
-
-        Object.keys(props).filter(prop => {
-
-            const minmax = this.getMinMax(prop);
-
-            if (!props[prop] || props[prop] < minmax.min || props[prop] > minmax.max) {
-
-                throw new Error(`GameSettings prop ${prop} (${props[prop]}) is not valid`);
-            }
-        })
-    }
-
-    constructor(data) {
-
-        this._constants = ConstGameSettings;
-
-        if (!data) {
-            data = this.getPresetProps(this._constants.presets[0].code);
-        }
-
-        Object.keys(data)
-            .filter(prop => ~this.getPublicProps().indexOf(prop))
-            .map(prop => this[prop] = data[prop]);
-
-        this._validateProps();
-    }
-
-    checkPossibleValue(property, value) {
-
-        // doing new values set
-        const props = {...this.getData(), [property]: value};
-
-        Object.keys(props).filter(prop => {
-
-            const minmax = this.getMinMax(prop, props);
-
-            if (!props[prop]) {
-
-                throw new Error(`GameSettings prop ${prop} (${props[prop]}) is not valid`);
-
-            } else if (props[prop] < minmax.min) {
-
-                props[prop] = minmax.min;
-
-            } else if (props[prop] > minmax.max) {
-
-                props[prop] = minmax.max;
-
-            }
-        });
-
-        return props;
-    }
-
-    getData() {
-
-        return this.getPublicProps()
-            .reduce((result, prop) => ({...result, [prop]: this[prop]}), {});
-    }
-
-    getPublicProps() {
-
-        return this._constants.publicProps.map(obj => obj.code);
-    }
-
-    getPublicProp(prop) {
-
-        return this._constants.publicProps.find(obj => obj.code === prop);
-    }
-
-    getMinMax(prop, props = false) {
-
-        if (~(this._sizeProps().indexOf(prop))) {
+        if (~(this._sizeProps.indexOf(prop))) {
 
             return {min: this._constants.minFieldSize, max: this._constants.maxFieldSize}
         } else {
 
-            return {min: this._constants.minBombs, max: this._maxBombs(props)}
+            return {min: this._constants.minBombs, max: this._maxBombs}
         }
     }
 
-    getPresets() {
+    get _sizeProps() {
+
+        return this._constants.sizeProps
+            .map(index => this._constants.publicProps[index].code)
+    }
+
+    get _maxBombs() {
+
+        return this._sizeProps
+                .map(prop => this[prop])
+                .reduce((p, current) => p * current, 1)
+                - 1;
+    }
+
+    // accepting preset.code ( 'beginner' | 'intermediate' | 'expert' ) or object {x: 3, y: 5, bombs: 10}
+    constructor(data) {
+
+        this._constants = ConstGameSettings;
+
+        this._initialData = data;
+
+        if (!data || typeof data === 'string') {
+
+            const preset = this.presets
+                .filter(preset => preset.props)
+                .find(preset => preset.code === data)
+                || this._constants.presets[0];
+
+            data = preset.props;
+        }
+
+        Object.keys(data)
+            .filter(prop => this.publicProps.find(p => p.code === prop))
+            .map(prop => this[prop] = data[prop]);
+
+
+        this.minmax = {};
+
+        this._constants.publicProps.map(prop => {
+
+            Object.defineProperty(this.minmax, prop.code, {
+
+                get: this._getMinMax.bind(this, prop.code)
+            })
+        });
+    }
+
+    get props() {
+
+        // returning data
+        return this.publicProps
+            .reduce((result, prop) => ({...result, [prop.code]: this[prop.code]}), {});
+    }
+
+    get publicProps() {
+
+        return this._constants.publicProps;
+    }
+
+    get presets() {
 
         return this._constants.presets;
     }
 
-    getPreset() {
+    get preset() {
 
-        return this._constants.presets
-            .find(preset => {
+        return this.presets.find(preset => {
 
-                const props = this.getPresetProps(preset.code);
-
-                return this.getPublicProps()
+                return this.publicProps
                     .map(prop => {
 
-                        return props && this[prop] === props[prop]
+                        return preset.props && this[prop.code] === preset.props[prop.code]
                     })
                     .reduce((init, current) => init && current, true)
             })
-            || this._constants.presets[this._constants.presets.length - 1];
+            || this.presets[this.presets.length - 1];
     }
 
-    getPresetProps(presetCode) {
+    get validation() {
 
-        const publicProps = this.getPublicProps();
+        const props = this.props;
 
-        const presetProps = this._constants.presets
-            .find(preset => preset.code === presetCode)
-            .props;
-
-        return !presetProps ? null : presetProps
-            .reduce((result, current, i) => ({...result, [publicProps[i]]: current}), {});
-    }
-
-
-    getPresetString(presetCode) {
-
-        const props = this.getPresetProps(presetCode);
-
-        if (!props) {
-            return '';
-        }
-
-        return this._sizeProps()
+        return Object.keys(props)
             .map(prop => {
-                const result = props[prop];
-                delete props[prop];
-                return result;
+
+                const minmax = this.minmax[prop];
+
+                if (!props[prop] || props[prop] < minmax.min || props[prop] > minmax.max) {
+
+                    return {
+                        prop: prop,
+                        value: props[prop],
+                        min: minmax.min,
+                        max: minmax.max,
+                    }
+                }
+
+                return null
             })
-            .join('x')
-            + ' '
-            + L['settings_field_bombs_count']
-            + ': '
-            + Object.values(props).toString();
+            .filter(_ => _);
     }
 }
+
 
 export default GameSettings;
