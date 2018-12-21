@@ -6,17 +6,19 @@ const ConstGameSettings = {
         {
             code: 'x',
             L_key: 'settings_field_width',
+            isSizeProp: true,
         },
         {
             code: 'y',
             L_key: 'settings_field_height',
+            isSizeProp: true,
         },
         {
             code: 'bombs',
             L_key: 'settings_field_bombs_count',
+            isSizeProp: false,
         },
     ],
-    sizeProps: [0, 1],
     minFieldSize: 2,
     maxFieldSize: 32,
     minBombs: 1,
@@ -67,8 +69,9 @@ class GameSettings {
 
     get _sizeProps() {
 
-        return this._constants.sizeProps
-            .map(index => this._constants.publicProps[index].code)
+        return this._constants.publicProps
+            .filter(prop => prop.isSizeProp)
+            .map(prop => prop.code)
     }
 
     get _maxBombs() {
@@ -86,7 +89,7 @@ class GameSettings {
 
         this._initialData = data;
 
-        if (!data || typeof data === 'string') {
+        if (!data || typeof data === 'string' || typeof data !== 'object') {
 
             const preset = this.presets
                 .filter(preset => preset.props)
@@ -94,6 +97,13 @@ class GameSettings {
                 || this._constants.presets[0];
 
             data = preset.props;
+        }
+
+        // if data obj is invalid
+        if (Object.keys(data).filter(prop => !this.publicProps.find(p => p.code === prop)).length) {
+
+            // setting data from first preset
+            data = this._constants.presets[0].props;
         }
 
         Object.keys(data)
