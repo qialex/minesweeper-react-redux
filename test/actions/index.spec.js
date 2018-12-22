@@ -59,7 +59,7 @@ describe('actions', () => {
 
     it('should create an action to process a click (tap) on field', () => {
 
-        let obj = {x: 1, y: 5, userActionType: IN_GAME_USER_FIELD_ACTIONS.PRIMARY};
+        let obj = {tileIndex: 5, userActionType: IN_GAME_USER_FIELD_ACTIONS.PRIMARY};
 
         let expectedAction = {
             type: MINESWEEPER.PROCESS_USER_FIELD_ACTION,
@@ -68,7 +68,7 @@ describe('actions', () => {
 
         expect(processFieldAction(obj)).toEqual(expectedAction);
 
-        obj = {x: 1, y: 5, userActionType: IN_GAME_USER_FIELD_ACTIONS.SECONDARY};
+        obj = {tileIndex: 5, userActionType: IN_GAME_USER_FIELD_ACTIONS.SECONDARY};
 
         expectedAction = {
             type: MINESWEEPER.PROCESS_USER_FIELD_ACTION,

@@ -1,72 +1,117 @@
 // src/js/utils/utils.js
+import GameSettings from '../models/GameSettings';
+import tileInitial from '../constants/tile';
 
-const getNeighbors = (fields, field) => {
+export const createTiles = (props) => {
 
-    // array of neighbors
-    return [
-        getFieldByCoordinates(fields, field.x-1, field.y-1),
-        getFieldByCoordinates(fields, field.x,   field.y-1),
-        getFieldByCoordinates(fields, field.x+1, field.y-1),
-        getFieldByCoordinates(fields, field.x-1, field.y  ),
-        getFieldByCoordinates(fields, field.x+1, field.y  ),
-        getFieldByCoordinates(fields, field.x-1, field.y+1),
-        getFieldByCoordinates(fields, field.x,   field.y+1),
-        getFieldByCoordinates(fields, field.x+1, field.y+1),
-    ].filter(field => !!field);
+    // getting gameSettings
+    const gameSettings = new GameSettings(props);
+
+    // creating array of empty tiles
+    return new Array(gameSettings.tilesCount).fill({...tileInitial});
 };
 
-const generateBombs = (settings, clickedCoordinates) => {
+export const seedBombs = (tiles, settings, tileIndex) => {
 
-    // field size
-    const fieldsCount = settings.x*settings.y;
+    // getting gameSettings
+    const gameSettings = new GameSettings(settings);
 
-    // mines count
-    const bombsCount = settings.bombs;
+    const generateBombs = (exceptNumber) => {
 
-    // getting except number from coordinates
-    const exceptNumber = settings.y*clickedCoordinates.x + clickedCoordinates.y;
+        // field size
+        const tilesCount = gameSettings.tilesCount;
 
-    // candidates to be a bomb
-    const candidates = [...Array(fieldsCount).keys()]; // 0, 1, 2 ... fieldsCount
+        // mines count
+        const bombsCount = settings.bombs;
 
-    // to avoid using splice that might be hard on big arrays we will switch lats element and exceptNumber
-    [candidates[candidates.indexOf(exceptNumber)], candidates[candidates.length - 1]] = [candidates[candidates.length - 1], candidates[candidates.indexOf(exceptNumber)]];
+        // candidates to be a bomb
+        const candidates = [...Array(tilesCount).keys()]; // 0, 1, 2 ... tilesCount
 
-    // and than just remove last element
-    candidates.length = candidates.length - 1;
+        // to avoid using splice that might be hard on big arrays we will switch lats element and exceptNumber
+        [candidates[candidates.indexOf(exceptNumber)], candidates[candidates.length - 1]] = [candidates[candidates.length - 1], candidates[candidates.indexOf(exceptNumber)]];
 
-    return Array(bombsCount).fill() // looping with bombsCount as iteration number
-        .map(() => {
+        // and than just remove last element
+        candidates.length = candidates.length - 1;
 
-            // random index
-            const randomIndex = Math.floor(Math.random() * candidates.length);
+        return Array(bombsCount).fill() // looping with bombsCount as iteration number
+            .map(() => {
 
-            // saving result
-            const result = candidates[randomIndex];
+                // random index
+                const randomIndex = Math.floor(Math.random() * candidates.length);
 
-            // again, to avoid splice, switching elements positions
-            [candidates[randomIndex], candidates[candidates.length - 1]] = [candidates[candidates.length - 1], candidates[randomIndex]];
+                // saving result
+                const result = candidates[randomIndex];
 
-            // and than just remove last element
-            candidates.length = candidates.length - 1;
+                // again, to avoid splice, switching elements positions
+                [candidates[randomIndex], candidates[candidates.length - 1]] = [candidates[candidates.length - 1], candidates[randomIndex]];
 
-            return result;
-        })
-        .sort((a, b) => a - b)
+                // and than just remove last element
+                candidates.length = candidates.length - 1;
+
+                return result;
+            })
+            .sort((a, b) => a - b)
+    };
+
+    const getNeighbors = (tiles, rowLength, tileIndex) => {
+
+        // top and bottom neighbors
+        let neighbors = [tiles[tileIndex - rowLength], tiles[tileIndex + rowLength]];
+
+        // neighbors from the left
+        if (tileIndex % rowLength) {
+            neighbors = [...neighbors, tiles[tileIndex - rowLength - 1], tiles[tileIndex - 1], tiles[tileIndex + rowLength - 1]]
+        }
+
+        // neighbors from the right
+        if ((tileIndex + 1) % rowLength) {
+            neighbors = [...neighbors, tiles[tileIndex - rowLength + 1], tiles[tileIndex + 1], tiles[tileIndex + rowLength + 1]]
+        }
+
+        return neighbors.filter(_ => !!_);
+    };
+
+    // array with numbers of bombs
+    const bombNumbers = generateBombs(tileIndex);
+
+    // placing mines
+    tiles = tiles.map((tile, i) => ({...tile, isBomb: !!~bombNumbers.indexOf(i)}));
+
+    return tiles.map((tile, i) => {
+
+        // if not a bomb
+        if (!tile.isBomb) {
+
+            // getting neighbors for a tile
+            tile.neighbors = getNeighbors(tiles, gameSettings.rowLength, i);
+
+            // placing number is tile not a bomb
+            tile.number = tile.neighbors.filter(f => f.isBomb).length;
+
+            if (tile.number) {
+
+                // removing neighbors because they are no longer need
+                tile.neighbors = undefined;
+            }
+        }
+
+        return tile;
+    });
 };
 
-export const openField = (field) => {
+// TODO : not tested yet
+export const openTile = (tile) => {
 
-    if (!field.isOpened) {
+    if (!tile.isOpened) {
 
-        // open field
-        field.isOpened = true;
+        // open tile
+        tile.isOpened = true;
 
-        // if field is empty
-        if (!field.number && field.neighbors) {
+        // if tile is empty
+        if (!tile.number && tile.neighbors) {
 
             // open neighbors
-            field.neighbors
+            tile.neighbors
                 .map(f => {
 
                     if (!f.isOpened) {
@@ -75,7 +120,7 @@ export const openField = (field) => {
                         f.isQestion = false;
 
                         // recursively
-                        openField(f);
+                        openTile(f);
                     }
 
                 })
@@ -89,69 +134,8 @@ export const openField = (field) => {
     }
 };
 
-export const getFieldByCoordinates = (fields, x, y) => {
+export const checkAllTitlesOpened = (tiles) => {
 
-    // getting a field by coordinates
-    return fields && fields.length && fields.find(field => field.x === x && field.y === y);
-};
-
-export const checkIfGameWon = (fields) => {
-
-    // if there is no unopened and not mine fields
-    return !fields.filter(_ => !_.isOpened && !_.isBomb).length;
-};
-
-export const createFields = (settings) => {
-
-    const fields = [];
-
-    // looping field size
-    for (let x=0; x<settings.x; x++) {
-
-        for (let y=0; y<settings.y; y++) {
-
-            // pushing field
-            fields.push({
-                x: x,
-                y: y,
-                isBomb: false,
-                isFlag: false,
-                isQuestion: false,
-                isOpened: false,
-                number: undefined,
-                neighbors: []
-            })
-        }
-    }
-
-    return fields;
-};
-
-export const seedBombs = (fields, settings, clickedCoordinates) => {
-
-    // array with numbers of bombs
-    const bombNumbers = generateBombs(settings, clickedCoordinates);
-
-    // placing mines
-    fields = fields.map((field, i) => ({...field, isBomb: !!~bombNumbers.indexOf(i)}));
-
-    return fields.map(field => {
-
-        // getting neighbors for a tile
-        field.neighbors = getNeighbors(fields, field);
-
-        if (!field.isBomb) {
-
-            // placing number is field not a bomb
-            field.number = field.neighbors.filter(f => f.isBomb).length;
-
-            if (field.number) {
-
-                // removing neighbors because they are no longer need
-                field.neighbors = undefined;
-            }
-        }
-
-        return field;
-    });
+    // if there is no unopened and not mine tiles
+    return !tiles.filter(tile => !tile.isOpened && !tile.isBomb).length;
 };

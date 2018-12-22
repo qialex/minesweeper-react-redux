@@ -39,24 +39,48 @@ describe('models->GameSettings', () => {
         // 3 publicProps
         expect(gameSettings.publicProps.length).toBe(3);
 
-        // 2 publicProps are field size
-        expect(gameSettings.publicProps.filter(_ => _.isSizeProp).length).toBe(2);
-
-        // 2 publicProps are field size
+        // each public prop
         gameSettings.publicProps.map(prop => {
 
-            // public prop object should contain 3 properties
-            expect(Object.keys(prop).length).toBe(3);
+            // public prop object should contain at lease 2 properties
+            expect(Object.keys(prop).length).toBeGreaterThanOrEqual(2);
 
             // .code should be a string
             expect(typeof prop.code).toBe('string');
 
             // .L_key should be a string
             expect(typeof prop.L_key).toBe('string');
-
-            // .isSizeProp should be a boolean
-            expect(typeof prop.isSizeProp).toBe('boolean');
         });
+
+        // 2 publicProps are field size
+        expect(gameSettings.publicProps.filter(_ => _.isSizeProp).length).toBe(2);
+
+        // each field size public prop
+        gameSettings.publicProps
+            .filter(_ => _.isSizeProp)
+            .map(prop => {
+
+                // public prop object should at lease 3 properties
+                expect(Object.keys(prop).length).toBeGreaterThanOrEqual(3);
+
+                // .isSizeProp should be a boolean
+                expect(typeof prop.isSizeProp).toBe('boolean');
+            });
+
+        // 1 publicProp is isRowLength
+        expect(gameSettings.publicProps.filter(_ => _.isRowLength).length).toBe(1);
+
+        // each field size public prop
+        gameSettings.publicProps
+            .filter(_ => _.isRowLength)
+            .map(prop => {
+
+                // public prop object should at lease 4 properties
+                expect(Object.keys(prop).length).toBe(4);
+
+                // .isSizeProp should be a boolean
+                expect(typeof prop.isRowLength).toBe('boolean');
+            });
 
         // minFieldSize should be defined
         expect(gameSettings._constants.minFieldSize).toBeDefined();
@@ -161,6 +185,24 @@ describe('models->GameSettings', () => {
                     }
                 })
             })
+
+        // tilesCount exist
+        expect(gameSettings.tilesCount).toBeDefined();
+
+        // tilesCount is number
+        expect(typeof gameSettings.tilesCount).toBe('number');
+
+        // bombs exist
+        expect(gameSettings.bombs).toBeDefined();
+
+        // bombs is number
+        expect(typeof gameSettings.bombs).toBe('number');
+
+        // rowLength exist
+        expect(gameSettings.rowLength).toBeDefined();
+
+        // rowLength is number
+        expect(typeof gameSettings.rowLength).toBe('number');
     });
 
     it('should create a GameSettings with correct .props', () => {
@@ -260,11 +302,25 @@ describe('models->GameSettings', () => {
         // creating gameSettings
         const gameSettings = new GameSettings();
 
-        // should have same .props
+        // should have same ._sizeProps
         expect(gameSettings._sizeProps).toEqual(
             gameSettings.publicProps
                 .filter(prop => prop.isSizeProp)
                 .map(prop => prop.code)
+        )
+    });
+
+    it('should create valid tilesCount getter for GameSettings', () => {
+
+        // creating gameSettings
+        const gameSettings = new GameSettings();
+
+        // should have same .tilesCount
+        expect(gameSettings.tilesCount).toEqual(
+            gameSettings.publicProps
+                .filter(prop => prop.isSizeProp)
+                .map(prop => gameSettings[`_${prop.code}`])
+                .reduce((total, current) => total * current, 1)
         )
     });
 
@@ -273,14 +329,32 @@ describe('models->GameSettings', () => {
         // creating gameSettings
         const gameSettings = new GameSettings();
 
-        // should have same .props
+        // should have same ._maxBombs
         expect(gameSettings._maxBombs).toEqual(
             gameSettings.publicProps
                 .filter(prop => prop.isSizeProp)
-                .map(prop => gameSettings[prop.code])
+                .map(prop => gameSettings[`_${prop.code}`])
                 .reduce((total, current) => total * current, 1)
                 - 1
         )
+    });
+
+    it('should create valid bombs getter for GameSettings', () => {
+
+        // creating gameSettings
+        const gameSettings = new GameSettings();
+
+        // should be equal to bombs from first preset
+        expect(gameSettings.bombs).toEqual(gameSettings.preset._props[gameSettings.preset._props.length - 1])
+    });
+
+    it('should create valid rowLength getter for GameSettings', () => {
+
+        // creating gameSettings
+        const gameSettings = new GameSettings();
+
+        // should be equal to bombs from first preset
+        expect(gameSettings.rowLength).toEqual(gameSettings.preset._props[0])
     });
 
     it('should correctly count min an max for props GameSettings._getMinMax() and .minmax', () => {

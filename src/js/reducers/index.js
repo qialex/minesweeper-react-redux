@@ -4,26 +4,12 @@ import { LANGUAGE_CHANGED } from "../constants/action-types";
 import { IN_GAME_USER_FIELD_ACTIONS } from '../constants/in-game-user-field-actions';
 import L from "../localization/Localization";
 import GameSettings from "../models/GameSettings";
-import {seedBombs, createFields, checkIfGameWon, getFieldByCoordinates, openField} from '../utils/utils';
+import {seedBombs, createTiles, checkAllTitlesOpened, openTile} from '../utils/utils';
+import stateInitial from '../constants/state';
+import gameInitial from '../constants/game';
 
-export const gameInitial = {
-    fields: [],
-    time: 0,
-    flags: 0,
-    started: false,
-    finished: false,
-    won: false,
-};
 
-export const initialState = {
-    globalSettings: {
-        language: L.getLanguage(),
-    },
-    gameSettings: new GameSettings(),
-    game: {...gameInitial},
-};
-
-export const rootReducer = (state = initialState, action) => {
+export const rootReducer = (state = stateInitial, action) => {
     switch (action.type) {
         case LANGUAGE_CHANGED: {
 
@@ -62,11 +48,11 @@ export const rootReducer = (state = initialState, action) => {
             // resetting game when settings are selected and saving settings
             return { ...state, game: {...gameInitial}, gameSettings: action.payload };
         }
-        case MINESWEEPER.PROCESS_USER_FIELD_ACTION: {
+        case MINESWEEPER.PROCESS_USER_FIELD_ACTION: { // TODO : not tested yet
 
             const { game } = state;
             const { gameSettings } = state;
-            const { x, y, userActionType } = action.payload;
+            const { tileIndex, userActionType } = action.payload;
 
             if (game.finished) {
 
@@ -79,52 +65,52 @@ export const rootReducer = (state = initialState, action) => {
                 // setting started property
                 game.started = true;
 
-                // if game not started yet - generate field
-                game.fields = createFields(gameSettings.props);
+                // if game not started yet - generate tile
+                game.tiles = createTiles(gameSettings);
             }
 
             // if first user primary action
-            if (userActionType === IN_GAME_USER_FIELD_ACTIONS.PRIMARY && !game.fields.find(_ => _.isOpened)) {
+            if (userActionType === IN_GAME_USER_FIELD_ACTIONS.PRIMARY && !game.tiles.find(_ => _.isOpened)) {
 
                 // seed bombs
-                game.fields = seedBombs(game.fields, gameSettings.props, {x, y});
+                game.tiles = seedBombs(game.tiles, gameSettings, tileIndex);
             }
 
-            // getting field
-            const field = getFieldByCoordinates(game.fields, x, y);
+            // getting tile
+            const tile = game.tiles[tileIndex];
 
-            if (field.isOpened) {
+            if (tile.isOpened) {
 
-                // if field is opened - do nothing
+                // if tile is opened - do nothing
                 return state;
             }
 
             if (userActionType === IN_GAME_USER_FIELD_ACTIONS.PRIMARY) {
 
-                if (field.isFlag || field.isQestion) {
+                if (tile.isFlag || tile.isQestion) {
 
-                    // if field is flag or - question
+                    // if tile is flag or - question
                     return state;
                 }
 
-                if (field.isBomb) {
+                if (tile.isBomb) {
 
                     // if clicked on bomb - finish game
                     game.finished = true;
-                    field.isOpened = true;
+                    tile.isOpened = true;
                 } else {
 
-                    // open fields recursively
-                    openField(field);
+                    // open tiles recursively
+                    openTile(tile);
 
-                    if (checkIfGameWon(game.fields)) {
+                    if (checkAllTitlesOpened(game.tiles)) {
 
-                        game.fields.map(field => {
+                        game.tiles.map(tile => {
 
-                            // placing flag on all fields
-                            if (field.isBomb && !field.isFlag) {
-                                field.isQuestion = false;
-                                field.isFlag = true;
+                            // placing flag on all tiles
+                            if (tile.isBomb && !tile.isFlag) {
+                                tile.isQuestion = false;
+                                tile.isFlag = true;
                             }
                         });
 
@@ -136,25 +122,25 @@ export const rootReducer = (state = initialState, action) => {
 
             } else if (userActionType === IN_GAME_USER_FIELD_ACTIONS.SECONDARY) {
 
-                if (field.isFlag) {
+                if (tile.isFlag) {
 
                     // if question is enabled in settings - change flag to a question, else, just remove flag
-                    field.isQestion = gameSettings.isQuestionTileEnabled;
-                    field.isFlag = false;
+                    tile.isQestion = gameSettings.isQuestionTileEnabled;
+                    tile.isFlag = false;
                     game.flags = game.flags - 1;
 
-                } else if (field.isQestion) {
+                } else if (tile.isQestion) {
 
                     // change question to nothing
-                    field.isQestion = false;
-                    field.isFlag = false;
+                    tile.isQestion = false;
+                    tile.isFlag = false;
 
                 } else {
 
                     // change nothing to a flag
                     game.flags = game.flags + 1;
-                    field.isQestion = false;
-                    field.isFlag = true;
+                    tile.isQestion = false;
+                    tile.isFlag = true;
                 }
 
             } else {

@@ -8,6 +8,7 @@ const ConstGameSettings = {
             code: 'x',
             L_key: 'settings_field_width',
             isSizeProp: true,
+            isRowLength: true,
         },
         {
             code: 'y',
@@ -17,10 +18,9 @@ const ConstGameSettings = {
         {
             code: 'bombs',
             L_key: 'settings_field_bombs_count',
-            isSizeProp: false,
         },
     ],
-    minFieldSize: 2,
+    minFieldSize: 3,
     maxFieldSize: 32,
     minBombs: 1,
     presets: [
@@ -77,10 +77,7 @@ class GameSettings {
 
     get _maxBombs() {
 
-        return this._sizeProps
-                .map(prop => this[prop])
-                .reduce((p, current) => p * current, 1)
-                - 1;
+        return this.tilesCount - 1;
     }
 
     // accepting preset.code ( 'beginner' | 'intermediate' | 'expert' ) or object {x: 3, y: 5, bombs: 10}
@@ -110,7 +107,7 @@ class GameSettings {
 
         Object.keys(data)
             .filter(prop => this.publicProps.find(p => p.code === prop))
-            .map(prop => this[prop] = data[prop]);
+            .map(prop => this[`_${prop}`] = data[prop]);
 
 
         this.minmax = {};
@@ -128,7 +125,7 @@ class GameSettings {
 
         // returning data
         return this.publicProps
-            .reduce((result, prop) => ({...result, [prop.code]: this[prop.code]}), {});
+            .reduce((result, prop) => ({...result, [prop.code]: this[`_${prop.code}`]}), {});
     }
 
     get publicProps() {
@@ -153,7 +150,7 @@ class GameSettings {
                 return this.publicProps
                     .map(prop => {
 
-                        return preset.props && this[prop.code] === preset.props[prop.code]
+                        return preset.props && this[`_${prop.code}`] === preset.props[prop.code]
                     })
                     .reduce((init, current) => init && current, true)
             })
@@ -182,6 +179,25 @@ class GameSettings {
                 return null
             })
             .filter(_ => _);
+    }
+
+    get tilesCount() {
+
+        return this._sizeProps
+            .map(prop => this[`_${prop}`])
+            .reduce((p, current) => p * current, 1)
+    }
+
+    get bombs() {
+
+        return this.publicProps.filter(prop => !prop.isSizeProp)
+            .map(prop => this[`_${prop.code}`])[0]
+    }
+
+    get rowLength() {
+
+        return this.publicProps.filter(prop => prop.isRowLength)
+            .map(prop => this[`_${prop.code}`])[0]
     }
 }
 

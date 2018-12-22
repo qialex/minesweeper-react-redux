@@ -1,39 +1,41 @@
-import { LANGUAGE_CHANGED } from "../../src/js/constants/action-types";
-import { globalChangeLanguage } from "../../src/js/actions/index";
-import { initialState, gameInitial, rootReducer } from '../../src/js/reducers';
+import { globalChangeLanguage, resetGame, updateGameTime, changeGameSettings, processFieldAction } from "../../src/js/actions/index";
+import { rootReducer } from '../../src/js/reducers';
 import L from "../../src/js/localization/Localization";
 import GameSettings from "../../src/js/models/GameSettings";
+import stateInitial from '../../src/js/constants/state';
+import gameInitial from '../../src/js/constants/game';
+
 
 describe('rootReducer', () => {
 
     it('should return the initial state', () => {
 
-        // initialState exist
-        expect(initialState).toBeDefined();
+        // stateInitial exist
+        expect(stateInitial).toBeDefined();
 
         // .globalSettings exist
-        expect(initialState.globalSettings).toBeDefined();
+        expect(stateInitial.globalSettings).toBeDefined();
 
         // .globalSettings.language exist
-        expect(initialState.globalSettings.language).toBeDefined();
+        expect(stateInitial.globalSettings.language).toBeDefined();
 
         // .gameSettings exist
-        expect(initialState.gameSettings).toBeDefined();
+        expect(stateInitial.gameSettings).toBeDefined();
 
         // .gameSettings instanceof GameSettings
-        expect(initialState.gameSettings instanceof GameSettings).toBeTruthy();
+        expect(stateInitial.gameSettings).toEqual(new GameSettings().props);
 
         // .game exist
-        expect(initialState.game).toBeDefined();
+        expect(stateInitial.game).toBeDefined();
 
         // .game is equal to gameInitial
-        expect(initialState.game).toEqual(gameInitial);
+        expect(stateInitial.game).toEqual(gameInitial);
 
-        // .fields exist
-        expect(gameInitial.fields).toBeDefined();
+        // .tiles exist
+        expect(gameInitial.tiles).toBeDefined();
 
-        // .fields.length is 0
-        expect(gameInitial.fields.length).toBe(0);
+        // .tiles.length is 0
+        expect(gameInitial.tiles.length).toBe(0);
 
         // .time exist
         expect(gameInitial.time).toBeDefined();
@@ -66,10 +68,10 @@ describe('rootReducer', () => {
         expect(gameInitial.won).toBe(false);
 
         // should be equal to initial state
-        expect(rootReducer(undefined, {})).toEqual(initialState)
+        expect(rootReducer(undefined, {})).toEqual(stateInitial);
     });
 
-    it('should return the state with changed language', () => {
+    it('should return the state with changed .language on LANGUAGE_CHANGED', () => {
 
         // looping available languages
         L.getAvailableLanguages().map(languageCode => {
@@ -78,45 +80,46 @@ describe('rootReducer', () => {
             const action = globalChangeLanguage(languageCode);
 
             // state language to be equal to current language
-            expect(rootReducer(undefined, action).globalSettings.language).toEqual(languageCode)
+            expect(rootReducer(undefined, action).globalSettings.language).toEqual(languageCode);
         })
     });
 
-    // it('should return the state with updated article on edit', () => {
-    //
-    //     const article = {
-    //         id: uuidv1(),
-    //         title: 'initial title'
-    //     };
-    //
-    //     const expectedArticle = {...article, title: 'new title'};
-    //
-    //     const action = editArticle(expectedArticle);
-    //
-    //     const initialState = {
-    //         articles: [article]
-    //     };
-    //
-    //     expect(rootReducer(initialState, action)).toEqual({
-    //         articles: [expectedArticle]
-    //     })
-    // });
-    //
-    // it('should return the state without the article on delete', () => {
-    //
-    //     const article = {
-    //         id: uuidv1(),
-    //         title: 'Test title'
-    //     };
-    //
-    //     const action = deleteArticle(article);
-    //
-    //     const initialState = {
-    //         articles: [article]
-    //     };
-    //
-    //     expect(rootReducer(initialState, action)).toEqual({
-    //         articles: []
-    //     })
-    // });
+    it('should return the state with cleaned .game on MINESWEEPER.RESET_GAME', () => {
+
+        // creating action for reset game
+        const action = resetGame();
+
+        // should be equal to initial state
+        expect(rootReducer(undefined, action)).toEqual(stateInitial);
+    });
+
+    it('should return the state with updated .time on MINESWEEPER.UPDATE_GAME_TIME', () => {
+
+        // const time
+        const time = 10;
+
+        // creating action for reset game
+        const action = updateGameTime(time);
+
+        // time in state should be equal to time
+        expect(rootReducer(undefined, action).game.time).toEqual(time);
+    });
+
+    it('should return the state with updated .gameSettings on MINESWEEPER.CHANGE_GAME_SETTINGS', () => {
+
+        // creating GameSettings to get a presets
+        let gameSettings = new GameSettings();
+
+        // getting game settings from most likely different preset
+        gameSettings = new GameSettings(gameSettings.presets.reverse().find(preset => preset.props).props);
+
+        // creating action for change game settings
+        const action = changeGameSettings(gameSettings);
+
+        // gameSettings in state should be equal to gameSettings
+        expect(rootReducer(undefined, action).gameSettings).toEqual(gameSettings);
+
+        // game in state should be equal to gameInitial
+        expect(rootReducer(undefined, action).game).toEqual(gameInitial);
+    });
 });

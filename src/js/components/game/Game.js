@@ -3,7 +3,7 @@ import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import connect from "react-redux/es/connect/connect";
 import {resetGame, updateGameTime} from "../../actions/index";
-import Field from "../field/Field";
+import Field from "./components/field/Field";
 import L from "../../localization/Localization";
 import './game.scss';
 

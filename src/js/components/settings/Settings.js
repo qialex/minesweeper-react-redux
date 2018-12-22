@@ -57,6 +57,7 @@ class ConnectedSettings extends Component {
 
         const gameSettings = new GameSettings(this.props.gameSettings);
 
+
         // setting gameSettings and selectedPreset
         this.setState({gameSettings: gameSettings, selectedPreset: gameSettings.preset});
     }
@@ -66,7 +67,7 @@ class ConnectedSettings extends Component {
         const { gameSettings } = this.state;
 
         // saving gameSettings
-        this.props.changeGameSettings(gameSettings);
+        this.props.changeGameSettings(gameSettings.props);
 
         // redirect back to game
         this._goToHomePage();
@@ -178,7 +179,7 @@ class ConnectedSettings extends Component {
                     <Slider
                         min={minmax.min}
                         max={minmax.max}
-                        value={gameSettings[prop.code]}
+                        value={gameSettings['_' + prop.code]}
                         onValueChanged={this.handleValueChanged.bind(this, prop.code)} />
                 </div>
             )

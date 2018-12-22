@@ -63,33 +63,33 @@
 
     &.tile-bomb {
 
-      background-image: url("../../../themes/qi/naval-mine.png");
+      background-image: url("../../../../../themes/qi/naval-mine.png");
       background-size: contain;
 
       &.tile-opened {
 
-        background-image: url("../../../themes/qi/explosion.png");
+        background-image: url("../../../../../themes/qi/explosion.png");
       }
     }
 
     &.tile-flag:before {
 
       content: '';
-      background-image: url("../../../themes/qi/flag.png");
+      background-image: url("../../../../../themes/qi/flag.png");
       background-size: contain;
     }
 
     &.tile-question:before {
 
       content: '';
-      background-image: url("../../../themes/qi/question-mark.png");
+      background-image: url("../../../../../themes/qi/question-mark.png");
       background-size: contain;
     }
 
     &.tile-flag-wrong:after {
 
       content: '';
-      background-image: url("../../../themes/qi/x.png");
+      background-image: url("../../../../../themes/qi/x.png");
       background-size: contain;
     }
 
