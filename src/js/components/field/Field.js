@@ -1,7 +1,8 @@
 // src/js/components/Field.js
 import React, {Component} from "react";
 import connect from "react-redux/es/connect/connect";
-import { processLeftClick, processRightClick } from "../../actions/index";
+import { IN_GAME_USER_FIELD_ACTIONS } from '../../constants/in-game-user-field-actions';
+import { processFieldAction } from "../../actions/index";
 import { getFieldByCoordinates } from '../../utils/utils';
 import './field.scss';
 
@@ -18,8 +19,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
 
     return {
-        processLeftClick: (x, y) => dispatch(processLeftClick({x, y})),
-        processRightClick: (x, y) => dispatch(processRightClick({x, y})),
+        processFieldAction: (x, y, userActionType) => dispatch(processFieldAction({x, y, userActionType})),
     };
 };
 
@@ -33,6 +33,8 @@ class ConnectedField extends Component{
             which: 0,
             isMouseDown: false
         };
+
+        this.handleMouseDown = this.handleMouseDown.bind(this);
     }
 
     handleContextMenu(event) {
@@ -56,17 +58,12 @@ class ConnectedField extends Component{
 
         const { which } = this.state;
 
-        if ( which === MOUSE_DOWN_WHICH_TYPE.LEFT_CLICK ) {
+        const userActionType = which === MOUSE_DOWN_WHICH_TYPE.LEFT_CLICK ? IN_GAME_USER_FIELD_ACTIONS.PRIMARY : IN_GAME_USER_FIELD_ACTIONS.SECONDARY;
 
-            // process left mouse click
-            this.props.processLeftClick(x, y);
+        // process user action
+        this.props.processFieldAction(x, y, userActionType);
 
-        } else if ( which === MOUSE_DOWN_WHICH_TYPE.RIGHT_CLICK ) {
-
-            // process right mouse click
-            this.props.processRightClick(x, y);
-        }
-
+        // unset mouse down effect
         this.setState({isMouseDown: false, which: undefined})
     }
 
@@ -101,7 +98,7 @@ class ConnectedField extends Component{
                         key={(x+y).toString()}
                         className={`tile ${classBomb} ${classOpened} ${classFlag} ${fieldFlagWrong} ${classQuestion} ${x + ' ' + y}`}
                         onContextMenu={this.handleContextMenu}
-                        onMouseDown={this.handleMouseDown.bind(this)}
+                        onMouseDown={this.handleMouseDown}
                         onMouseUp={this.handleMouseUp.bind(this, x, y)}>
                         {fieldNumber}
                     </div>

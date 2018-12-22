@@ -1,13 +1,13 @@
-import { MINESWEEPER, LANGUAGE_CHANGED } from "../../src/js/constants/action-types";
+import { MINESWEEPER, LANGUAGE_CHANGED } from '../../src/js/constants/action-types';
+import { IN_GAME_USER_FIELD_ACTIONS } from '../../src/js/constants/in-game-user-field-actions';
 import {
     globalChangeLanguage,
     resetGame,
     changeGameSettings,
     updateGameTime,
-    processLeftClick,
-    processRightClick
-} from "../../src/js/actions/index";
-import GameSettings from "../../src/js/models/GameSettings";
+    processFieldAction,
+} from '../../src/js/actions/index';
+import GameSettings from '../../src/js/models/GameSettings';
 
 
 describe('actions', () => {
@@ -57,28 +57,24 @@ describe('actions', () => {
         expect(updateGameTime(time)).toEqual(expectedAction)
     });
 
-    it('should create an action to process a left click', () => {
+    it('should create an action to process a click (tap) on field', () => {
 
-        const corrdinaes = {x: 1, y: 5};
+        let obj = {x: 1, y: 5, userActionType: IN_GAME_USER_FIELD_ACTIONS.PRIMARY};
 
-        const expectedAction = {
-            type: MINESWEEPER.PROCESS_LEFT_CLICK,
-            payload: corrdinaes,
+        let expectedAction = {
+            type: MINESWEEPER.PROCESS_USER_FIELD_ACTION,
+            payload: obj,
         };
 
-        expect(processLeftClick(corrdinaes)).toEqual(expectedAction)
-    });
+        expect(processFieldAction(obj)).toEqual(expectedAction);
 
-    it('should create an action to process a right click', () => {
+        obj = {x: 1, y: 5, userActionType: IN_GAME_USER_FIELD_ACTIONS.SECONDARY};
 
-        const corrdinaes = {x: 1, y: 5};
-
-        const expectedAction = {
-            type: MINESWEEPER.PROCESS_RIGHT_CLICK,
-            payload: corrdinaes,
+        expectedAction = {
+            type: MINESWEEPER.PROCESS_USER_FIELD_ACTION,
+            payload: obj,
         };
 
-        expect(processRightClick(corrdinaes)).toEqual(expectedAction)
+        expect(processFieldAction(obj)).toEqual(expectedAction);
     });
-
 });

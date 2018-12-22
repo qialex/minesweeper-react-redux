@@ -18,6 +18,18 @@ describe('models->GameSettings', () => {
         // constants exist
         expect(gameSettings._constants).toBeDefined();
 
+        // isQuestionTileEnabled exist
+        expect(gameSettings._constants.isQuestionTileEnabled).toBeDefined();
+
+        // isQuestionTileEnabled exist
+        expect(gameSettings.isQuestionTileEnabled).toBeDefined();
+
+        // isQuestionTileEnabled exist
+        expect(gameSettings._constants.isQuestionTileEnabled).toBe(gameSettings.isQuestionTileEnabled);
+
+        // isQuestionTileEnabled is boolean
+        expect(typeof gameSettings.isQuestionTileEnabled).toBe('boolean');
+
         // publicProps exist
         expect(gameSettings._constants.publicProps).toBeDefined();
 

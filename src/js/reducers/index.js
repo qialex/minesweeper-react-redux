@@ -1,27 +1,29 @@
 // src/js/reducers/index.js
 import { MINESWEEPER } from "../constants/action-types";
 import { LANGUAGE_CHANGED } from "../constants/action-types";
+import { IN_GAME_USER_FIELD_ACTIONS } from '../constants/in-game-user-field-actions';
 import L from "../localization/Localization";
 import GameSettings from "../models/GameSettings";
 import {seedBombs, createFields, checkIfGameWon, getFieldByCoordinates, openField} from '../utils/utils';
 
+export const gameInitial = {
+    fields: [],
+    time: 0,
+    flags: 0,
+    started: false,
+    finished: false,
+    won: false,
+};
 
 export const initialState = {
     globalSettings: {
         language: L.getLanguage(),
     },
-    gameSettings: new GameSettings().props,
-    game: {
-        fields: undefined,
-        time: 0,
-        flags: 0,
-        started: false,
-        finished: false,
-        won: false,
-    },
+    gameSettings: new GameSettings(),
+    game: {...gameInitial},
 };
 
-const rootReducer = (state = initialState, action) => {
+export const rootReducer = (state = initialState, action) => {
     switch (action.type) {
         case LANGUAGE_CHANGED: {
 
@@ -48,17 +50,7 @@ const rootReducer = (state = initialState, action) => {
                 return state;
             }
 
-            // starting new game
-            const newGame = {
-                fields: undefined,
-                time: 0,
-                flags: 0,
-                started: false,
-                finished: false,
-                won: false,
-            };
-
-            return { ...state, game: newGame };
+            return { ...state, game: {...gameInitial} };
         }
         case MINESWEEPER.UPDATE_GAME_TIME: {
 
@@ -67,83 +59,14 @@ const rootReducer = (state = initialState, action) => {
         }
         case MINESWEEPER.CHANGE_GAME_SETTINGS: {
 
-            // resetting game when settings are selected
-            const game = {
-                fields: undefined,
-                time: 0,
-                flags: 0,
-                started: false,
-                finished: false,
-                won: false,
-            };
-
-            return { ...state, game: game, gameSettings: action.payload };
+            // resetting game when settings are selected and saving settings
+            return { ...state, game: {...gameInitial}, gameSettings: action.payload };
         }
-        case MINESWEEPER.PROCESS_LEFT_CLICK: {
+        case MINESWEEPER.PROCESS_USER_FIELD_ACTION: {
 
             const { game } = state;
             const { gameSettings } = state;
-            const { x, y } = action.payload;
-
-            if (!game.started) {
-
-                // if game not started yet - generate field
-                game.fields = createFields(gameSettings);
-                game.fields = seedBombs(game.fields, gameSettings, {x, y});
-                game.started = true;
-                game.finished = false;
-                game.won = false;
-            }
-
-
-            if (game.started && game.fields && game.fields.length && !game.fields.find(_ => _.isBomb)) {
-
-                // if game was started by right click - still need to generate mines
-                game.fields = seedBombs(game.fields, gameSettings, {x, y});
-            }
-
-            // getting field
-            const field = getFieldByCoordinates(game.fields, x, y);
-
-            if (game.finished || field.isOpened || field.isFlag || field.isQestion) {
-
-                // if game is finished - do nothing
-                return state;
-            }
-
-            if (field.isBomb) {
-
-                // if clicked on bomb - finish game
-                game.finished = true;
-                field.isOpened = true;
-            } else {
-
-                // open fields recursively
-                openField(field);
-
-                if (checkIfGameWon(game.fields)) {
-
-                    game.fields.map(field => {
-
-                        // placing flag on all fields
-                        if (field.isBomb && !field.isFlag) {
-                            field.isQuestion = false;
-                            field.isFlag = true;
-                        }
-                    });
-
-                    // if game is won
-                    game.finished = true;
-                    game.won = true;
-                }
-            }
-
-            return { ...state, game: game };
-        }
-        case MINESWEEPER.PROCESS_RIGHT_CLICK: {
-
-            const { game, gameSettings } = state;
-            const { x, y } = action.payload;
+            const { x, y, userActionType } = action.payload;
 
             if (game.finished) {
 
@@ -153,11 +76,18 @@ const rootReducer = (state = initialState, action) => {
 
             if (!game.started) {
 
-                // if game not started yet - generate field, but not place mines
-                game.fields = createFields(gameSettings);
+                // setting started property
                 game.started = true;
-                game.finished = false;
-                game.won = false;
+
+                // if game not started yet - generate field
+                game.fields = createFields(gameSettings.props);
+            }
+
+            // if first user primary action
+            if (userActionType === IN_GAME_USER_FIELD_ACTIONS.PRIMARY && !game.fields.find(_ => _.isOpened)) {
+
+                // seed bombs
+                game.fields = seedBombs(game.fields, gameSettings.props, {x, y});
             }
 
             // getting field
@@ -165,30 +95,72 @@ const rootReducer = (state = initialState, action) => {
 
             if (field.isOpened) {
 
-                // if game is opened - do nothing
+                // if field is opened - do nothing
                 return state;
             }
 
+            if (userActionType === IN_GAME_USER_FIELD_ACTIONS.PRIMARY) {
 
-            if (field.isFlag) {
+                if (field.isFlag || field.isQestion) {
 
-                // change flag to a question
-                field.isQestion = true;
-                field.isFlag = false;
-                game.flags = game.flags - 1;
+                    // if field is flag or - question
+                    return state;
+                }
 
-            } else if (field.isQestion) {
+                if (field.isBomb) {
 
-                // change question to nothing
-                field.isQestion = false;
-                field.isFlag = false;
+                    // if clicked on bomb - finish game
+                    game.finished = true;
+                    field.isOpened = true;
+                } else {
+
+                    // open fields recursively
+                    openField(field);
+
+                    if (checkIfGameWon(game.fields)) {
+
+                        game.fields.map(field => {
+
+                            // placing flag on all fields
+                            if (field.isBomb && !field.isFlag) {
+                                field.isQuestion = false;
+                                field.isFlag = true;
+                            }
+                        });
+
+                        // if game is won
+                        game.finished = true;
+                        game.won = true;
+                    }
+                }
+
+            } else if (userActionType === IN_GAME_USER_FIELD_ACTIONS.SECONDARY) {
+
+                if (field.isFlag) {
+
+                    // if question is enabled in settings - change flag to a question, else, just remove flag
+                    field.isQestion = gameSettings.isQuestionTileEnabled;
+                    field.isFlag = false;
+                    game.flags = game.flags - 1;
+
+                } else if (field.isQestion) {
+
+                    // change question to nothing
+                    field.isQestion = false;
+                    field.isFlag = false;
+
+                } else {
+
+                    // change nothing to a flag
+                    game.flags = game.flags + 1;
+                    field.isQestion = false;
+                    field.isFlag = true;
+                }
 
             } else {
 
-                // change nothing to a flag
-                game.flags = game.flags + 1;
-                field.isQestion = false;
-                field.isFlag = true;
+                // if invalid IN_GAME_USER_FIELD_ACTIONS return state
+                return state;
             }
 
             return { ...state, game: game };
@@ -197,4 +169,3 @@ const rootReducer = (state = initialState, action) => {
             return state;
     }
 };
-export default rootReducer;

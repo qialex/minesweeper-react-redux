@@ -1,13 +1,13 @@
 $tileSize: 2em;
 
-body, button, select {
-
-  font-family: monospace;
-  text-transform: capitalize;
-}
-
 body {
 
   background-color: whitesmoke;
   font-size: $tileSize;
+}
+
+* {
+
+  font-family: monospace;
+  text-transform: capitalize;
 }

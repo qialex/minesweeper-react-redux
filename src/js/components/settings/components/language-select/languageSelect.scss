@@ -1,5 +1,12 @@
 select {
 
+  font-family: monospace;
+  text-transform: capitalize;
+  font-size: .9em;
+  background-color: paleturquoise;
+  color: #a94766fc;
+  cursor: pointer;
+
   &:focus {
 
     outline: none;

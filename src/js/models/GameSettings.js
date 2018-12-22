@@ -2,6 +2,7 @@
 import React from "react";
 
 const ConstGameSettings = {
+    isQuestionTileEnabled: true,
     publicProps: [
         {
             code: 'x',
@@ -42,7 +43,7 @@ const ConstGameSettings = {
             code: 'custom',
             L_key: 'settings_custom',
         }
-    ]
+    ],
 };
 
 ConstGameSettings.presets.map(preset => {
@@ -91,6 +92,7 @@ class GameSettings {
 
         if (!data || typeof data === 'string' || typeof data !== 'object') {
 
+            // trying to find data in presets, if not getting props from first preset
             const preset = this.presets
                 .filter(preset => preset.props)
                 .find(preset => preset.code === data)
@@ -137,6 +139,11 @@ class GameSettings {
     get presets() {
 
         return this._constants.presets;
+    }
+
+    get isQuestionTileEnabled() {
+
+        return this._constants.isQuestionTileEnabled;
     }
 
     get preset() {
