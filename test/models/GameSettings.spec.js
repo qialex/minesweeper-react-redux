@@ -184,7 +184,7 @@ describe('models->GameSettings', () => {
                         expect(preset.props[prop.code]).toBeLessThanOrEqual(gameSettings._constants.maxFieldSize * gameSettings._constants.maxFieldSize);
                     }
                 })
-            })
+            });
 
         // tilesCount exist
         expect(gameSettings.tilesCount).toBeDefined();

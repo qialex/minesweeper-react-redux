@@ -1,11 +1,9 @@
 // src/js/components/Field.js
 import React, {Component} from "react";
 import connect from "react-redux/es/connect/connect";
-import { IN_GAME_USER_FIELD_ACTIONS } from '../../../../constants/in-game-user-field-actions';
 import { processFieldAction } from "../../../../actions/index";
 import './field.scss';
 import GameSettings from "../../../../models/GameSettings";
-import tileInitial from "../../../../constants/tile";
 
 
 const MOUSE_DOWN_WHICH_TYPE = {
@@ -21,7 +19,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
 
     return {
-        processFieldAction: (tileIndex, userActionType) => dispatch(processFieldAction({tileIndex, userActionType})),
+        processFieldAction: (tileIndex, isPrimaryAction) => dispatch(processFieldAction({tileIndex, isPrimaryAction})),
     };
 };
 
@@ -60,10 +58,10 @@ class ConnectedField extends Component{
 
         const { which } = this.state;
 
-        const userActionType = which === MOUSE_DOWN_WHICH_TYPE.LEFT_CLICK ? IN_GAME_USER_FIELD_ACTIONS.PRIMARY : IN_GAME_USER_FIELD_ACTIONS.SECONDARY;
+        const isPrimaryAction = which === MOUSE_DOWN_WHICH_TYPE.LEFT_CLICK ;
 
         // process user action
-        this.props.processFieldAction(tileIndex, userActionType);
+        this.props.processFieldAction(tileIndex, isPrimaryAction);
 
         // unset mouse down effect
         this.setState({isMouseDown: false, which: undefined})

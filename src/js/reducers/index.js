@@ -1,7 +1,5 @@
 // src/js/reducers/index.js
-import { MINESWEEPER } from "../constants/action-types";
-import { LANGUAGE_CHANGED } from "../constants/action-types";
-import { IN_GAME_USER_FIELD_ACTIONS } from '../constants/in-game-user-field-actions';
+import { MINESWEEPER, LANGUAGE_CHANGED } from "../constants/action-types";
 import L from "../localization/Localization";
 import GameSettings from "../models/GameSettings";
 import {seedBombs, createTiles, checkAllTitlesOpened, openTile} from '../utils/utils';
@@ -48,11 +46,11 @@ export const rootReducer = (state = stateInitial, action) => {
             // resetting game when settings are selected and saving settings
             return { ...state, game: {...gameInitial}, gameSettings: action.payload };
         }
-        case MINESWEEPER.PROCESS_USER_FIELD_ACTION: { // TODO : not tested yet
+        case MINESWEEPER.PROCESS_USER_FIELD_ACTION: {
 
             const { game } = state;
             const { gameSettings } = state;
-            const { tileIndex, userActionType } = action.payload;
+            const { tileIndex, isPrimaryAction } = action.payload;
 
             if (game.finished) {
 
@@ -70,7 +68,7 @@ export const rootReducer = (state = stateInitial, action) => {
             }
 
             // if first user primary action
-            if (userActionType === IN_GAME_USER_FIELD_ACTIONS.PRIMARY && !game.tiles.find(_ => _.isOpened)) {
+            if (isPrimaryAction && !game.tiles.find(_ => _.isOpened)) {
 
                 // seed bombs
                 game.tiles = seedBombs(game.tiles, gameSettings, tileIndex);
@@ -85,7 +83,7 @@ export const rootReducer = (state = stateInitial, action) => {
                 return state;
             }
 
-            if (userActionType === IN_GAME_USER_FIELD_ACTIONS.PRIMARY) {
+            if (isPrimaryAction) {
 
                 if (tile.isFlag || tile.isQestion) {
 
@@ -120,12 +118,14 @@ export const rootReducer = (state = stateInitial, action) => {
                     }
                 }
 
-            } else if (userActionType === IN_GAME_USER_FIELD_ACTIONS.SECONDARY) {
+            } else {
 
                 if (tile.isFlag) {
 
+                    const gameSettingsClass = new GameSettings(gameSettings);
+
                     // if question is enabled in settings - change flag to a question, else, just remove flag
-                    tile.isQestion = gameSettings.isQuestionTileEnabled;
+                    tile.isQestion = gameSettingsClass.isQuestionTileEnabled;
                     tile.isFlag = false;
                     game.flags = game.flags - 1;
 
@@ -143,10 +143,6 @@ export const rootReducer = (state = stateInitial, action) => {
                     tile.isFlag = true;
                 }
 
-            } else {
-
-                // if invalid IN_GAME_USER_FIELD_ACTIONS return state
-                return state;
             }
 
             return { ...state, game: game };

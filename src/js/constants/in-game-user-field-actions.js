@@ -1,4 +1,0 @@
-export const IN_GAME_USER_FIELD_ACTIONS = {
-    PRIMARY: 'PRIMARY',
-    SECONDARY: 'SECONDARY',
-};

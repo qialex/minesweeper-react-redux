@@ -8,7 +8,7 @@ export const createTiles = (props) => {
     const gameSettings = new GameSettings(props);
 
     // creating array of empty tiles
-    return new Array(gameSettings.tilesCount).fill({...tileInitial});
+    return new Array(gameSettings.tilesCount).fill(0).map(() => ({...tileInitial}));
 };
 
 export const seedBombs = (tiles, settings, tileIndex) => {
@@ -99,7 +99,6 @@ export const seedBombs = (tiles, settings, tileIndex) => {
     });
 };
 
-// TODO : not tested yet
 export const openTile = (tile) => {
 
     if (!tile.isOpened) {

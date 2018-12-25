@@ -1,5 +1,7 @@
-import { globalChangeLanguage, resetGame, updateGameTime, changeGameSettings, processFieldAction } from "../../src/js/actions/index";
+import { createStore } from "redux";
 import { rootReducer } from '../../src/js/reducers';
+import store from "../../src/js/store/index";
+import { globalChangeLanguage, resetGame, updateGameTime, changeGameSettings, processFieldAction } from "../../src/js/actions/index";
 import L from "../../src/js/localization/Localization";
 import GameSettings from "../../src/js/models/GameSettings";
 import stateInitial from '../../src/js/constants/state';
@@ -81,7 +83,7 @@ describe('rootReducer', () => {
 
             // state language to be equal to current language
             expect(rootReducer(undefined, action).globalSettings.language).toEqual(languageCode);
-        })
+        });
     });
 
     it('should return the state with cleaned .game on MINESWEEPER.RESET_GAME', () => {
@@ -121,5 +123,227 @@ describe('rootReducer', () => {
 
         // game in state should be equal to gameInitial
         expect(rootReducer(undefined, action).game).toEqual(gameInitial);
+    });
+
+    it('should return the state updated due the MINESWEEPER.PROCESS_USER_FIELD_ACTION: primary action, start game, create tiles, flag, question', () => {
+
+        const tileIndex = 0;
+
+        // creating a primary action
+        const actionPrimary = processFieldAction({tileIndex: tileIndex, isPrimaryAction: true});
+
+        // creating a not primary action
+        const actionSecondary = processFieldAction({tileIndex: tileIndex, isPrimaryAction: false});
+
+        // generating state after actionSecondary
+        let state = rootReducer(undefined, actionSecondary);
+
+        let flags = state.game.flags;
+
+        // .game.started in state should be true
+        expect(state.game.started).toBeTruthy();
+
+        // .game.tiles should be not empty
+        expect(!!state.game.tiles.length).toBeTruthy();
+
+        // tile should be a flag
+        expect(state.game.tiles[tileIndex].isFlag).toBeTruthy();
+
+        // .game.tiles should have no bombs placed
+        expect(state.game.tiles.filter(_ => _.isBomb).length).toBe(0);
+
+        // creating GameSettings to get a presets
+        let gameSettings = new GameSettings(state.gameSettings);
+
+        // generating state after primary action
+        state = rootReducer(state, actionPrimary);
+
+        // tile should still be flag
+        expect(state.game.tiles[tileIndex].isFlag).toBeTruthy();
+
+        // tile should not be opened
+        expect(state.game.tiles[tileIndex].isOpened).toBeFalsy();
+
+        // disabling question mode
+        gameSettings._constants.isQuestionTileEnabled = false;
+
+        // generating state after duplicating user action
+        state = rootReducer(state, actionSecondary);
+
+        // enabling question true
+        if (gameSettings._constants.isQuestionTileEnabled) {
+
+            // tile should not be flag
+            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+
+            // tile should be question
+            expect(state.game.tiles[tileIndex].isQestion).toBeTruthy();
+
+            // flags should be increased
+            expect(state.game.flags).toBe(flags - 1);
+
+            // generating state after primary action
+            state = rootReducer(state, actionPrimary);
+
+            // tile should not be flag
+            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+
+            // tile should be question
+            expect(state.game.tiles[tileIndex].isQestion).toBeTruthy();
+
+            // tile should not be opened
+            expect(state.game.tiles[tileIndex].isOpened).toBeFalsy();
+
+            // generating state after duplicating user action
+            state = rootReducer(state, actionSecondary);
+
+            // tile should not be flag
+            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+
+            // tile should be question
+            expect(state.game.tiles[tileIndex].isQestion).toBeFalsy();
+
+        } else {
+
+            // tile should not be flag
+            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+
+            // tile should not be question
+            expect(state.game.tiles[tileIndex].isQestion).toBeFalsy();
+
+            // flags should be increased
+            expect(state.game.flags).toBe(flags - 1);
+        }
+    });
+
+    it('should return the state updated due the MINESWEEPER.PROCESS_USER_FIELD_ACTION: primary action, start game, create tiles, seed bombs, open field', () => {
+
+        const tileIndex = 0;
+
+        // creating a primary action
+        let actionPrimary = processFieldAction({tileIndex: tileIndex, isPrimaryAction: true});
+
+        // creating a not primary action
+        const actionSecondary = processFieldAction({tileIndex: tileIndex, isPrimaryAction: false});
+
+        // generating state
+        let state = rootReducer(rootReducer(undefined, resetGame()), actionPrimary);
+
+        // .game.started in state should be true
+        expect(state.game.started).toBeTruthy();
+
+        // .game.tiles should be not empty
+        expect(!!state.game.tiles.length).toBeTruthy();
+
+        // creating GameSettings to get a presets
+        let gameSettings = new GameSettings(state.gameSettings);
+
+        // .game.tiles should be equal to settings
+        expect(state.game.tiles.filter(_ => _.isBomb).length).toBe(gameSettings.bombs);
+
+        // tile should be opened
+        expect(state.game.tiles[tileIndex].isOpened).toBeTruthy();
+
+        // tile should be not a bomb
+        expect(state.game.tiles[tileIndex].isBomb).toBeFalsy();
+
+        // trying to apply secondary action on tile
+        state = rootReducer(state, actionSecondary);
+
+        // tile should be opened
+        expect(state.game.tiles[tileIndex].isOpened).toBeTruthy();
+
+        // tile should be not a flag
+        expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+
+        // getting empty tile
+        const emptyTileIndex = state.game.tiles.findIndex(_ => !_.isBomb && !_.isOpened && !_.number);
+
+        // creating a primary action
+        actionPrimary = processFieldAction({tileIndex: emptyTileIndex, isPrimaryAction: true});
+
+        // generating state
+        state = rootReducer(state, actionPrimary);
+
+        // tile should be opened
+        expect(state.game.tiles[emptyTileIndex].isOpened).toBeTruthy();
+
+        // looping neighbors, each
+        state.game.tiles[emptyTileIndex].neighbors.map(_ => {
+
+            // tile should be opened
+            expect(_.isOpened).toBeTruthy();
+        })
+    });
+
+    it('should return the state updated due the MINESWEEPER.PROCESS_USER_FIELD_ACTION: bomb, finish game, block field', () => {
+
+        const tileIndex = 0;
+
+        // creating primary action
+        const actionPrimary = processFieldAction({tileIndex: tileIndex, isPrimaryAction: true});
+
+        // creating a not primary action
+        const actionSecondary = processFieldAction({tileIndex: tileIndex + 1, isPrimaryAction: false});
+
+        // generating state
+        let state = rootReducer(rootReducer(undefined, resetGame()), actionPrimary);
+
+        // finding a bomb
+        const bombTileIndex = state.game.tiles.reverse().findIndex(_ => _.isBomb);
+
+        // creating action for a primary action
+        const actionPrimaryOnBomb = processFieldAction({tileIndex: bombTileIndex, isPrimaryAction: true});
+
+        // trying to apply secondary action on tile
+        state = rootReducer(state, actionPrimaryOnBomb);
+
+        // .game.tiles should be equal to settings
+        expect(state.game.tiles[bombTileIndex].isOpened).toBeTruthy();
+
+        // .game.finished should be true
+        expect(state.game.finished).toBeTruthy();
+
+        // .game.won should be false
+        expect(state.game.won).toBeFalsy();
+
+        // creating another primary action
+        const actionPrimary2 = processFieldAction({tileIndex: tileIndex + 1, isPrimaryAction: true});
+
+        // trying to apply secondary action on another tile
+        state = rootReducer(state, actionSecondary);
+
+        // trying to apply secondary action on another tile
+        state = rootReducer(state, actionPrimary2);
+
+        // another tile should not respond on any action
+        expect(state.game.tiles[tileIndex + 1].isOpened).toBeFalsy();
+    });
+
+    it('should return the state updated due the MINESWEEPER.PROCESS_USER_FIELD_ACTION: open, won', () => {
+
+        const tileIndex = 0;
+
+        // creating primary action
+        const actionPrimary = processFieldAction({tileIndex: tileIndex, isPrimaryAction: true});
+
+        // generating state
+        let state = rootReducer(rootReducer(undefined, resetGame()), actionPrimary);
+
+        state.game.tiles.map((tile, i) => {
+            if (!tile.isBomb && !tile.isOpened) {
+
+                // creating primary action
+                const actionPrimary = processFieldAction({tileIndex: i, isPrimaryAction: true});
+
+                state = rootReducer(state, actionPrimary);
+            }
+        });
+
+        // .game.finished should be true
+        expect(state.game.finished).toBeTruthy();
+
+        // .game.won should be true
+        expect(state.game.won).toBeTruthy();
     });
 });
