@@ -25,10 +25,10 @@ class Slider extends Component {
     _tryUpdateSliderLineWidth() {
 
         // width of the line element
-        const sliderLineWidth = this.sliderLine.current.clientWidth;
+        const sliderLineWidth = this.sliderLine.current && this.sliderLine.current.clientWidth;
 
         // checking if width changed
-        if (sliderLineWidth !== this.state.sliderLineWidth) {
+        if (sliderLineWidth && sliderLineWidth !== this.state.sliderLineWidth) {
 
             //setting line element width
             this.setState({sliderLineWidth: sliderLineWidth})
@@ -225,7 +225,6 @@ class Slider extends Component {
                         <div className="slider-dot" style={dotStyle} onMouseDownCapture={this.handleMouseDownCapture}>
                         </div>
                     </div>
-
                 </div>
                 <div className="slider-min-max">{max}</div>
                 <div className="slider-input-wrapper">

@@ -117,5 +117,11 @@ describe('actions', () => {
 
         // there should be no unopened empty tiles
         expect(tiles.find(_ => !_.isOpened && !_.number && !_.isBomb)).toBeUndefined();
+
+        // trying to open opened tile again
+        openTile(tileEmpty);
+
+        // tileEmpty should be opened
+        expect(tileEmpty.isOpened).toBeTruthy();
     });
 });

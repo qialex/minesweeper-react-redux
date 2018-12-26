@@ -75,6 +75,18 @@ describe('rootReducer', () => {
 
     it('should return the state with changed .language on LANGUAGE_CHANGED', () => {
 
+        // invalid value
+        const invalidLanguage = 'invalidLanguage';
+
+        // getting initial language
+        const languageInitial = rootReducer(undefined, {}).globalSettings.language;
+
+        // creating action to change language with invalid value
+        const action = globalChangeLanguage(invalidLanguage);
+
+        // state language to be equal to current language
+        expect(rootReducer(undefined, action).globalSettings.language).toEqual(languageInitial);
+
         // looping available languages
         L.getAvailableLanguages().map(languageCode => {
 
@@ -170,50 +182,53 @@ describe('rootReducer', () => {
         // generating state after duplicating user action
         state = rootReducer(state, actionSecondary);
 
-        // enabling question true
-        if (gameSettings._constants.isQuestionTileEnabled) {
+        // tile should not be flag
+        expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
 
-            // tile should not be flag
-            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+        // tile should not be question
+        expect(state.game.tiles[tileIndex].isQestion).toBeFalsy();
 
-            // tile should be question
-            expect(state.game.tiles[tileIndex].isQestion).toBeTruthy();
+        // flags should be increased
+        expect(state.game.flags).toBe(flags - 1);
 
-            // flags should be increased
-            expect(state.game.flags).toBe(flags - 1);
+        // enabling question mode
+        gameSettings._constants.isQuestionTileEnabled = true;
 
-            // generating state after primary action
-            state = rootReducer(state, actionPrimary);
+        // generating state after user action, changing to flag
+        state = rootReducer(state, actionSecondary);
 
-            // tile should not be flag
-            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+        // generating state after user action, changing flag to question
+        state = rootReducer(state, actionSecondary);
 
-            // tile should be question
-            expect(state.game.tiles[tileIndex].isQestion).toBeTruthy();
+        // tile should not be flag
+        expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
 
-            // tile should not be opened
-            expect(state.game.tiles[tileIndex].isOpened).toBeFalsy();
+        // tile should be question
+        expect(state.game.tiles[tileIndex].isQestion).toBeTruthy();
 
-            // generating state after duplicating user action
-            state = rootReducer(state, actionSecondary);
+        // flags should be increased
+        expect(state.game.flags).toBe(flags - 1);
 
-            // tile should not be flag
-            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+        // generating state after primary action
+        state = rootReducer(state, actionPrimary);
 
-            // tile should be question
-            expect(state.game.tiles[tileIndex].isQestion).toBeFalsy();
+        // tile should not be flag
+        expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
 
-        } else {
+        // tile should be question
+        expect(state.game.tiles[tileIndex].isQestion).toBeTruthy();
 
-            // tile should not be flag
-            expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+        // tile should not be opened
+        expect(state.game.tiles[tileIndex].isOpened).toBeFalsy();
 
-            // tile should not be question
-            expect(state.game.tiles[tileIndex].isQestion).toBeFalsy();
+        // generating state after duplicating user action
+        state = rootReducer(state, actionSecondary);
 
-            // flags should be increased
-            expect(state.game.flags).toBe(flags - 1);
-        }
+        // tile should not be flag
+        expect(state.game.tiles[tileIndex].isFlag).toBeFalsy();
+
+        // tile should be question
+        expect(state.game.tiles[tileIndex].isQestion).toBeFalsy();
     });
 
     it('should return the state updated due the MINESWEEPER.PROCESS_USER_FIELD_ACTION: primary action, start game, create tiles, seed bombs, open field', () => {

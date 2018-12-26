@@ -9,8 +9,13 @@
   "scripts": {
     "start": "webpack-dev-server --mode development --open",
     "build": "webpack --mode production",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "npm test -- --watch"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^.+\\.(css|less|scss)$": "babel-jest"
+    }
   },
   "engines": {
     "node": "=11.0.0",
