@@ -1,6 +1,6 @@
-// src/js/components/settings/LanguageSelect.jsect.js
+// src/js/components/settings/LanguageSelect.js
 import React, {Component} from "react";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import {globalChangeLanguage} from "../../../../actions/index";
 import L from "../../../../localization/Localization";
 import './languageSelect.scss';
@@ -16,7 +16,7 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-class ConnectedLanguageSelect extends Component{
+export class ConnectedLanguageSelect extends Component{
 
     constructor(){
 
@@ -36,8 +36,9 @@ class ConnectedLanguageSelect extends Component{
 
     render() {
 
+        const { language } = this.props;
+
         const languages = L.getAvailableLanguages();
-        const defaultValue = L.getLanguage();
 
         // doing options for select
         const options = languages.map(lang => {
@@ -46,7 +47,7 @@ class ConnectedLanguageSelect extends Component{
 
         return (
             <div className="setting-language">
-                <select defaultValue={defaultValue} onChange={this.handleLanguageChanged}>
+                <select defaultValue={language} onChange={this.handleLanguageChanged}>
                     {options}
                 </select>
             </div>

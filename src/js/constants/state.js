@@ -5,7 +5,7 @@ import gameInitial from "./game";
 
 const stateInitial = {
     globalSettings: {
-        language: L.getLanguage(),
+        language: localStorage.getItem('language') || L.getLanguage(),
     },
     gameSettings: new GameSettings().props,
     game: {...gameInitial},
