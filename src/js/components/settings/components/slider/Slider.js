@@ -65,11 +65,11 @@ class Slider extends Component {
 
         this.sliderLine = React.createRef();
         
-        this.handleSliderLineClick  = this.handleSliderLineClick.bind(this);
-        this.handleValueFieldChange = this.handleValueFieldChange.bind(this);
-        this.handleMouseDownCapture = this.handleMouseDownCapture.bind(this);
-        this.handleMouseMove        = this.handleMouseMove.bind(this);
-        this.handleMouseUp          = this.handleMouseUp.bind(this);
+        this.handleSliderLineClick   = this.handleSliderLineClick.bind(this);
+        this.handleValueFieldChanged = this.handleValueFieldChanged.bind(this);
+        this.handleMouseDownCapture  = this.handleMouseDownCapture.bind(this);
+        this.handleMouseMove         = this.handleMouseMove.bind(this);
+        this.handleMouseUp           = this.handleMouseUp.bind(this);
     }
 
     componentWillMount() {
@@ -97,7 +97,7 @@ class Slider extends Component {
         this._tryUpdateSliderLineWidth();
     }
 
-    handleValueFieldChange(event) {
+    handleValueFieldChanged(event) {
 
         const { min, max } = this.props;
         let value = +event.target.value;
@@ -234,7 +234,7 @@ class Slider extends Component {
                         id="currentValue"
                         style={inputStyle}
                         value={currentValue}
-                        onChange={this.handleValueFieldChange}
+                        onChange={this.handleValueFieldChanged}
                     />
                 </div>
             </div>

@@ -31,22 +31,25 @@ describe('Component: LanguageSelect',()=>{
     it('renders the component', () => {
 
         // should contain one ConnectedLanguageSelect
-        expect(wrapper.find(ConnectedLanguageSelect).length).toEqual(1);
+        expect(wrapper.find(ConnectedLanguageSelect)).toHaveLength(1);
 
         // should contain one div
-        expect(component.find('div').length).toEqual(1);
+        expect(component.find('div')).toHaveLength(1);
 
         // should contain one select
-        expect(component.find('select').length).toEqual(1);
+        expect(component.find('select')).toHaveLength(1);
 
         // should contain as much options as we have languages in L
-        expect(component.find('option').length).toEqual(L.getAvailableLanguages().length);
+        expect(component.find('option')).toHaveLength(L.getAvailableLanguages().length);
     });
 
     it('should have valid props', () => {
 
         // should have language prop, equal to stateInitial
         expect(wrapper.prop('language')).toEqual(stateInitial.globalSettings.language);
+
+        // should be similar selected option to props.language
+        expect(component.find('select').props().defaultValue).toEqual(wrapper.prop('language'));
 
         // should have globalChangeLanguage prop
         expect(wrapper.prop('globalChangeLanguage')).toBeDefined();

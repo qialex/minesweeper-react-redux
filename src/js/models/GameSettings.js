@@ -6,14 +6,14 @@ const ConstGameSettings = {
     publicProps: [
         {
             code: 'x',
-            L_key: 'settings_field_width',
+            L_key: 'settings_field_height',
             isSizeProp: true,
-            isRowLength: true,
         },
         {
             code: 'y',
-            L_key: 'settings_field_height',
+            L_key: 'settings_field_width',
             isSizeProp: true,
+            isRowLength: true,
         },
         {
             code: 'bombs',
