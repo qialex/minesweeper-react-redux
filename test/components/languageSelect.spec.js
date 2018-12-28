@@ -8,7 +8,7 @@ import stateInitial from '../../src/js/constants/state';
 import L from "../../src/js/localization/Localization";
 
 
-describe('Component: LanguageSelect',()=>{
+describe('Component: LanguageSelect, ConnectedLanguageSelect',()=>{
 
     // setting spy on handleLanguageChanged
     const handleLanguageChangedSpy = sinon.spy(ConnectedLanguageSelect.prototype, "handleLanguageChanged");

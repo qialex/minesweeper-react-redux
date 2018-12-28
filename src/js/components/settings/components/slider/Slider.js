@@ -78,7 +78,7 @@ class Slider extends Component {
         this._setCurrentValueFromProps();
     }
 
-    componentDidMount () {
+    componentDidMount() {
 
         // setting up line element width
         this._tryUpdateSliderLineWidth();
@@ -100,7 +100,7 @@ class Slider extends Component {
     handleValueFieldChanged(event) {
 
         const { min, max } = this.props;
-        let value = +event.target.value;
+        let value = +event.target.value || this.state.currentValue;
 
         // checking value for min and max
         value = value < min ? min : value;
@@ -129,9 +129,6 @@ class Slider extends Component {
         // adding event listeners
         document.addEventListener('mousemove', this.handleMouseMove);
         document.addEventListener('mouseup', this.handleMouseUp, addEventListenerOnceOptions);
-
-        // ugly hack TODO: click! event on parent element firing after mouseDown event looks like a probable react bug
-        document.querySelector('.setting-wrapper').addEventListener('click', (e) => {e.stopPropagation()}, addEventListenerOnceOptions);
 
         // saving X position of mouseDown event
         const { x } = event.nativeEvent;

@@ -22,7 +22,7 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-class ConnectedSettings extends Component {
+export class ConnectedSettings extends Component {
 
     _isDisplayCustomSettings() {
 
@@ -186,7 +186,7 @@ class ConnectedSettings extends Component {
         });
 
         return (
-            <div className="setting-wrapper" onClick={this.handleClickOutSide.bind(this)}>
+            <div className="setting-wrapper" onMouseDown={this.handleClickOutSide.bind(this)}>
                 <div className="setting-panel">
                     <div className="settings-panel-close"  onClick={this._goToHomePage}>
                     </div>
