@@ -1,7 +1,7 @@
 // src/js/components/settings/LanguageSelect.js
-import React, {Component} from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
-import {globalChangeLanguage} from "../../../../actions/index";
+import { globalChangeLanguage } from "../../../../actions/index";
 import L from "../../../../localization/Localization";
 import './languageSelect.scss';
 
@@ -16,7 +16,13 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export class ConnectedLanguageSelect extends Component{
+export class ConnectedLanguageSelect extends Component {
+
+    _reduxGlobalChangeLanguage(language) {
+
+        // setting language in global settings to re-render related components
+        this.props.globalChangeLanguage(language);
+    }
 
     constructor(){
 
@@ -31,7 +37,7 @@ export class ConnectedLanguageSelect extends Component{
         const language = event.target.value;
 
         // setting language in global settings to re-render related components
-        this.props.globalChangeLanguage(language);
+        this._reduxGlobalChangeLanguage(language);
     }
 
     render() {

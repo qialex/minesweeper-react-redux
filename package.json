@@ -17,9 +17,12 @@
     "moduleNameMapper": {
       "^.+\\.(css|less|scss)$": "babel-jest"
     },
-    "setupTestFrameworkScriptFile": "<rootDir>test/enzyme.js",
+    "setupFiles": ["<rootDir>test/_setup/enzyme.js", "<rootDir>test/_setup/localStorageMock.js"],
     "testPathIgnorePatterns": [
-      "<rootDir>/test/enzyme.js"
+      "/node_modules/", "<rootDir>/test/_setup/"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/", "<rootDir>/test/_setup/"
     ]
   },
   "engines": {

@@ -1,11 +1,12 @@
 // src/js/components/Game.js
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
-import connect from "react-redux/es/connect/connect";
-import {resetGame, updateGameTime} from "../../actions/index";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { globalChangeLanguage, resetGame, updateGameTime } from "../../actions/index";
 import Field from "./components/field/Field";
 import L from "../../localization/Localization";
 import './game.scss';
+
 
 const mainButtonIconsNumbers = {
     positive: 5,
@@ -21,12 +22,31 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
 
     return {
+        globalChangeLanguage: language => dispatch(globalChangeLanguage(language)),
         resetGame: () => dispatch(resetGame()),
         updateGameTime: time => dispatch(updateGameTime(time)),
     };
 };
 
-class ConnectedGame extends Component{
+export class ConnectedGame extends Component {
+
+    _reduxGlobalChangeLanguage(language) {
+
+        // calling reducer function
+        this.props.globalChangeLanguage(language);
+    }
+
+    _reduxUpdateGameTime(time) {
+
+        // calling reducer function
+        this.props.updateGameTime(time);
+    }
+
+    _reduxResetGame() {
+
+        // reset game
+        this.props.resetGame();
+    }
 
     static getRandomIconNumber(type) {
         return 1 + ( Math.random() * mainButtonIconsNumbers[type] ) << 0
@@ -44,6 +64,7 @@ class ConnectedGame extends Component{
         this.handleNewGameClick = this.handleNewGameClick.bind(this);
         this.handleGameMouseDown = this.handleGameMouseDown.bind(this);
         this.handleGameMouseUp = this.handleGameMouseUp.bind(this);
+        this.tick = this.tick.bind(this);
     }
 
     componentWillMount() {
@@ -53,7 +74,7 @@ class ConnectedGame extends Component{
         if (localStorageLanguage) {
 
             // if exist setting as current interface language
-            L.setLanguage(localStorageLanguage);
+            this._reduxGlobalChangeLanguage(localStorageLanguage);
         }
     }
 
@@ -61,28 +82,41 @@ class ConnectedGame extends Component{
 
         const { game } = this.props;
 
+        // if game is started, but there is no timer
         if (!this.state.timer && game.started && !game.finished) {
-            const timer = setInterval(this.tick.bind(this), 1000);
+
+            // starting timer
+            const timer = setInterval(this.tick, 1000);
+
+            // setting state
             this.setState({timer});
+
+            return;
         }
 
+        // if there is a timer, but game is not started or finished
         if (this.state.timer && (!game.started || game.finished)) {
+
+            // clear interval
             clearInterval(this.state.timer);
+
+            // setting state
             this.setState({timer: null});
         }
     }
 
     tick() {
+
         const { game } = this.props;
 
         // updating game time
-        this.props.updateGameTime((game.time + 1) || 1);
+        this._reduxUpdateGameTime(game.time + 1);
     }
 
     handleNewGameClick() {
 
         // reset game
-        this.props.resetGame();
+        this._reduxResetGame();
     }
 
     handleGameMouseDown() {
@@ -91,6 +125,7 @@ class ConnectedGame extends Component{
 
         if (!game.finished) {
 
+            // setting state
             this.setState({isMouseDown: true});
         }
     }
@@ -101,6 +136,7 @@ class ConnectedGame extends Component{
 
         if (!game.finished) {
 
+            // setting state
             this.setState({isMouseDown: false});
         }
     }
@@ -111,10 +147,13 @@ class ConnectedGame extends Component{
         const { game, gameSettings } = this.props;
         const bombsLeft = gameSettings.bombs - game.flags;
 
-        const mainButtonClass = game.won ? `icon-positive-${ConnectedGame.getRandomIconNumber('positive')}`
-            : game.finished ? `icon-negative-${ConnectedGame.getRandomIconNumber('negative')}`
-                : isMouseDown ? `icon-promising-${ConnectedGame.getRandomIconNumber('promising')}`
-                    : '';
+        const mainButtonClass = 'main-button' +
+            (
+                game.won ? ` icon-positive-${ConnectedGame.getRandomIconNumber('positive')}`
+                    : game.finished ? ` icon-negative-${ConnectedGame.getRandomIconNumber('negative')}`
+                        : isMouseDown ? ` icon-promising-${ConnectedGame.getRandomIconNumber('promising')}`
+                            : ''
+            );
 
         return (
             <div className="main-wrapper">
@@ -127,7 +166,7 @@ class ConnectedGame extends Component{
                             <div className="mines-left">
                                 {bombsLeft}
                             </div>
-                            <div className="main-button">
+                            <div className="main-button-wrapper">
                                 <div className={mainButtonClass} onClick={this.handleNewGameClick}>
                                 </div>
                             </div>

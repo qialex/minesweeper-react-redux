@@ -1,12 +1,12 @@
 // src/js/components/Field.js
 import React, {Component} from "react";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import { processFieldAction } from "../../../../actions/index";
 import './field.scss';
 import GameSettings from "../../../../models/GameSettings";
 
 
-const MOUSE_DOWN_WHICH_TYPE = {
+export const MOUSE_DOWN_WHICH_TYPE = {
     LEFT_CLICK: 1,
     RIGHT_CLICK: 3,
 };
@@ -23,7 +23,7 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-class ConnectedField extends Component{
+export class ConnectedField extends Component{
 
     constructor() {
 

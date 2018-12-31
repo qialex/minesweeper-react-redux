@@ -1,7 +1,7 @@
 // test/components/slider.spec.js
 import React from "react";
 import sinon from 'sinon';
-import { shallow } from '../enzyme';
+import { shallow } from '../_setup/enzyme';
 import Slider from "../../src/js/components/settings/components/slider/Slider";
 
 
@@ -229,9 +229,6 @@ describe('Component: Slider',()=>{
 
             // value should be equal to the max
             expect(wrapper.state().currentValue).toBe(max);
-
-            // state should be related to event
-            //expect(wrapper.state()).toBe(123);
 
             // creating mouse up event
             const mouseUp = new Event('mouseup');

@@ -1,4 +1,4 @@
-// src/js/actions/index.js
+// src/js/actions/index.spec.js
 import { MINESWEEPER } from "../constants/action-types";
 import { LANGUAGE_CHANGED } from "../constants/action-types";
 

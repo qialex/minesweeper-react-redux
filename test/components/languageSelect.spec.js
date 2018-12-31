@@ -1,8 +1,8 @@
 // test/components/languageSelect.spec.js
-import React, {Component} from "react";
+import React from "react";
 import configureStore from 'redux-mock-store'
 import sinon from 'sinon';
-import { shallow } from '../enzyme';
+import { shallow } from '../_setup/enzyme';
 import LanguageSelect, { ConnectedLanguageSelect } from "../../src/js/components/settings/components/language-select/LanguageSelect";
 import stateInitial from '../../src/js/constants/state';
 import L from "../../src/js/localization/Localization";
@@ -10,8 +10,8 @@ import L from "../../src/js/localization/Localization";
 
 describe('Component: LanguageSelect, ConnectedLanguageSelect',()=>{
 
-    // setting spy on handleLanguageChanged
-    const handleLanguageChangedSpy = sinon.spy(ConnectedLanguageSelect.prototype, "handleLanguageChanged");
+    // setting spy on _reduxGlobalChangeLanguage
+    const _reduxGlobalChangeLanguageSpy = sinon.spy(ConnectedLanguageSelect.prototype, "_reduxGlobalChangeLanguage");
 
     // creating mock store
     const mockStore = configureStore([])(stateInitial);
@@ -69,9 +69,9 @@ describe('Component: LanguageSelect, ConnectedLanguageSelect',()=>{
         component.find('select').simulate('change', event);
 
         // handleLanguageChangedSpy should be called once
-        expect(handleLanguageChangedSpy.calledOnce).toBeTruthy();
+        expect(_reduxGlobalChangeLanguageSpy.calledOnce).toBeTruthy();
 
         // with parameter equal to mock event
-        expect(handleLanguageChangedSpy.calledWith(event)).toBeTruthy();
+        expect(_reduxGlobalChangeLanguageSpy.calledWith(event.target.value)).toBeTruthy();
     });
 });

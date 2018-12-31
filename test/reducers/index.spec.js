@@ -298,9 +298,6 @@ describe('rootReducer', () => {
         // creating primary action
         const actionPrimary = processFieldAction({tileIndex: tileIndex, isPrimaryAction: true});
 
-        // creating a not primary action
-        const actionSecondary = processFieldAction({tileIndex: tileIndex + 1, isPrimaryAction: false});
-
         // generating state
         let state = rootReducer(rootReducer(undefined, resetGame()), actionPrimary);
 
@@ -322,17 +319,23 @@ describe('rootReducer', () => {
         // .game.won should be false
         expect(state.game.won).toBeFalsy();
 
-        // creating another primary action
-        const actionPrimary2 = processFieldAction({tileIndex: tileIndex + 1, isPrimaryAction: true});
+        // getting index of a still closed tile
+        const closedTile = state.game.tiles.findIndex(_ => !_.isOpened);
+
+        // creating a not primary action
+        const actionSecondary = processFieldAction({tileIndex: closedTile, isPrimaryAction: false});
 
         // trying to apply secondary action on another tile
         state = rootReducer(state, actionSecondary);
+
+        // creating another primary action
+        const actionPrimary2 = processFieldAction({tileIndex: closedTile, isPrimaryAction: true});
 
         // trying to apply secondary action on another tile
         state = rootReducer(state, actionPrimary2);
 
         // another tile should not respond on any action
-        expect(state.game.tiles[tileIndex + 1].isOpened).toBeFalsy();
+        expect(state.game.tiles[closedTile].isOpened).toBeFalsy();
     });
 
     it('should return the state updated due the MINESWEEPER.PROCESS_USER_FIELD_ACTION: open, won', () => {

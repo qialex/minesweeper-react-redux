@@ -24,6 +24,12 @@ const mapDispatchToProps = dispatch => {
 
 export class ConnectedSettings extends Component {
 
+    _reduxChangeGameSettings(props) {
+
+        // saving gameSettings
+        this.props.changeGameSettings(props);
+    }
+
     _isDisplayCustomSettings() {
 
         const { selectedPreset } = this.state;
@@ -67,7 +73,7 @@ export class ConnectedSettings extends Component {
         const { gameSettings } = this.state;
 
         // saving gameSettings
-        this.props.changeGameSettings(gameSettings.props);
+        this._reduxChangeGameSettings(gameSettings.props);
 
         // redirect back to game
         this._goToHomePage();
@@ -148,7 +154,7 @@ export class ConnectedSettings extends Component {
             const props = preset.props ? Object.values(preset.props) : preset.props;
 
             return (
-                <div className="form-group" key={preset.code}>
+                <div className="form-group preset-radio-button" key={preset.code}>
                     <div className="container">
                         <label>
                             <input
@@ -200,7 +206,7 @@ export class ConnectedSettings extends Component {
                         {sliders}
                     </div>
                     <div className="buttons-group">
-                        <button onClick={this._goToHomePage}>
+                        <button className="button-close" onClick={this._goToHomePage}>
                             {L.close}
                         </button>
                         <button className="button-green" onClick={this.handleSave}>
