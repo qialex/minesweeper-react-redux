@@ -3,17 +3,18 @@
   "version": "1.0.0",
   "description": "Minesweeper React/Redux",
   "author": "Alexander Ishchenko",
-  "homepage": "https://qialex.github.io/minesweeper-react-redux/",
+  "homepage": "https://github.com/qialex/minesweeper-react-redux",
   "keywords": [],
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server --mode development --open",
     "build": "webpack --mode production",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "test": "jest",
     "test:coverage": "npm test -- --coverage",
     "test:watch": "npm test -- --watch",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/coveralls/bin/coveralls.js"
   },
   "jest": {
     "moduleNameMapper": {
@@ -43,7 +44,6 @@
   "bugs": {
     "url": "https://github.com/qialex/minesweeper-react-redux/issues"
   },
-  "homepage": "https://github.com/qialex/minesweeper-react-redux",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-jest": "^23.6.0",
@@ -51,6 +51,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "coveralls": "^3.0.2",
     "css-loader": "^0.28.11",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",

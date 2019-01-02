@@ -66,3 +66,6 @@ build/
 # .idea
 .DS_Store
 .idea
+
+# .coveralls
+.coveralls.yml
