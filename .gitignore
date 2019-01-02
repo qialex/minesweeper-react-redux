@@ -60,6 +60,9 @@ typings/
 # webpack
 dist/
 
+# gh-pages
+build/
+
 # .idea
 .DS_Store
 .idea

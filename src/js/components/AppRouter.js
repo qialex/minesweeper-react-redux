@@ -1,16 +1,16 @@
 // src/js/components/AppRouter.js
 import React from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { HashRouter, Route } from "react-router-dom";
 import Game from "./game/Game";
 import Settings from "./settings/Settings";
 import '../../index.scss'
 
 const AppRouter = () => (
-    <BrowserRouter>
+    <HashRouter>
         <div>
             <Route path="/" component={Game} />
             <Route path="/settings/" component={Settings} />
         </div>
-    </BrowserRouter>
+    </HashRouter>
 );
 export default AppRouter;

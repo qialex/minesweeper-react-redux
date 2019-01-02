@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Minesweeper React/Redux",
   "author": "Alexander Ishchenko",
-  "main": "index.js",
+  "homepage": "https://qialex.github.io/minesweeper-react-redux/",
   "keywords": [],
   "license": "MIT",
   "scripts": {
@@ -11,18 +11,25 @@
     "build": "webpack --mode production",
     "test": "jest",
     "test:coverage": "npm test -- --coverage",
-    "test:watch": "npm test -- --watch"
+    "test:watch": "npm test -- --watch",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "jest": {
     "moduleNameMapper": {
       "^.+\\.(css|less|scss)$": "babel-jest"
     },
-    "setupFiles": ["<rootDir>test/_setup/enzyme.js", "<rootDir>test/_setup/localStorageMock.js"],
+    "setupFiles": [
+      "<rootDir>test/_setup/enzyme.js",
+      "<rootDir>test/_setup/localStorageMock.js"
+    ],
     "testPathIgnorePatterns": [
-      "/node_modules/", "<rootDir>/test/_setup/"
+      "/node_modules/",
+      "<rootDir>/test/_setup/"
     ],
     "coveragePathIgnorePatterns": [
-      "/node_modules/", "<rootDir>/test/_setup/"
+      "/node_modules/",
+      "<rootDir>/test/_setup/"
     ]
   },
   "engines": {
@@ -47,6 +54,7 @@
     "css-loader": "^0.28.11",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.6.0",
+    "gh-pages": "^2.0.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.0.7",
     "jest": "^23.6.0",

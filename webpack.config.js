@@ -4,13 +4,13 @@ const path = require('path');
 
 module.exports = {
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'build'),
         filename: 'index_bundle.js',
-        publicPath: '/'
+        publicPath: "",
     },
     performance: {
         maxEntrypointSize: 512000,
-        maxAssetSize: 512000
+        maxAssetSize: 512000,
     },
     module: {
         rules: [
