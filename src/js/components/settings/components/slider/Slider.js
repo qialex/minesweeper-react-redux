@@ -112,10 +112,17 @@ class Slider extends Component {
 
     handleSliderLineClick(event) {
 
+        // ignore clicks on the dot
+        if (event.nativeEvent.target.classList.contains('slider-dot')) {
+
+            return
+        }
+
         const { min, max } = this.props;
+        const { sliderLineWidth } = this.state;
 
         // calculating value for clicked position
-        const newCurrentValue =  Math.round((event.nativeEvent.offsetX ) / event.target.clientWidth * (max - min)) + min;
+        const newCurrentValue =  Math.round((event.nativeEvent.offsetX ) / sliderLineWidth * (max - min)) + min;
 
         // setting currentValue
         this.setState({currentValue: newCurrentValue});

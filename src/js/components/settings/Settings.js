@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { changeGameSettings } from "../../actions/index";
-import {Redirect} from "react-router-dom";
 import L from "../../localization/Localization";
 import LanguageSelect from "./components/language-select/LanguageSelect";
 import Slider from "./components/slider/Slider";
@@ -41,7 +40,7 @@ export class ConnectedSettings extends Component {
     _goToHomePage() {
 
         // redirect back to game
-        this.setState({toHomePage: true})
+        this.props.onClose();
     }
 
     constructor() {
@@ -50,11 +49,10 @@ export class ConnectedSettings extends Component {
 
         this.state = {
             gameSettings: undefined,
-            toHomePage: false,
             selectedPreset: undefined,
         };
 
-        this._goToHomePage = this._goToHomePage.bind(this);
+        this.handleCloseClick = this.handleCloseClick.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.handleRadioChanged = this.handleRadioChanged.bind(this);
     }
@@ -77,16 +75,6 @@ export class ConnectedSettings extends Component {
 
         // redirect back to game
         this._goToHomePage();
-    }
-
-    handleClickOutSide(event) {
-
-        // if clicked outside
-        if (event.nativeEvent.target.classList.contains('setting-wrapper')) {
-
-            // redirect back to game
-            this._goToHomePage();
-        }
     }
 
     handleValueChanged(property, value) {
@@ -136,13 +124,13 @@ export class ConnectedSettings extends Component {
         }
     }
 
+    handleCloseClick() {
+
+        // redirect back to game
+        this._goToHomePage();
+    }
+
     render() {
-
-        if (this.state.toHomePage === true) {
-
-            // redirect back to the game
-            return <Redirect to='/' />
-        }
 
         const { gameSettings, selectedPreset } = this.state;
 
@@ -167,7 +155,8 @@ export class ConnectedSettings extends Component {
                                 <span className="no-capitalize">— <b>{props[0]}</b>x<b>{props[1]}</b>, {L['settings_field_bombs_count']}: <b>{props[2]}</b></span>
                                 )}
 
-                            <span className="checkmark"></span>
+                            <span className="checkmark">
+                            </span>
                         </label>
                     </div>
                 </div>
@@ -192,27 +181,23 @@ export class ConnectedSettings extends Component {
         });
 
         return (
-            <div className="setting-wrapper" onMouseDown={this.handleClickOutSide.bind(this)}>
-                <div className="setting-panel">
-                    <div className="settings-panel-close"  onClick={this._goToHomePage}>
-                    </div>
-                    <div className="language-wrapper">
-                        <LanguageSelect />
-                    </div>
-                    <div className="radio-buttons-wrapper">
-                        {radioOptions}
-                    </div>
-                    <div className="sliders-wrapper">
-                        {sliders}
-                    </div>
-                    <div className="buttons-group">
-                        <button className="button-close" onClick={this._goToHomePage}>
-                            {L.close}
-                        </button>
-                        <button className="button-green" onClick={this.handleSave}>
-                            {L.save}
-                        </button>
-                    </div>
+            <div className="settings-container">
+                <div className="language-wrapper">
+                    <LanguageSelect />
+                </div>
+                <div className="radio-buttons-wrapper">
+                    {radioOptions}
+                </div>
+                <div className="sliders-wrapper">
+                    {sliders}
+                </div>
+                <div className="buttons-group">
+                    <button className="button-close" onClick={this.handleCloseClick}>
+                        {L.close}
+                    </button>
+                    <button className="button-green" onClick={this.handleSave}>
+                        {L.save}
+                    </button>
                 </div>
             </div>
         );

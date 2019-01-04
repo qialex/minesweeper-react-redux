@@ -4,7 +4,8 @@ import { Route } from "react-router-dom";
 import { shallow } from "enzyme/build";
 import AppRouter from "../../src/js/components/AppRouter";
 import Game  from "../../src/js/components/game/Game";
-import Settings  from "../../src/js/components/settings/Settings";
+import Modal  from "../../src/js/components/modal/Modal";
+
 
 describe('AppRouter', () => {
 
@@ -21,10 +22,10 @@ describe('AppRouter', () => {
                 // '/' should be related to Game
                 expect(routeProps.component).toBe(Game);
             }
-            if (routeProps.path === '/settings') {
+            if (routeProps.path === '/modal') {
 
                 // '/settings' should be related to Settings
-                expect(routeProps.component).toBe(Settings);
+                expect(routeProps.component).toBe(Modal);
             }
         });
     });

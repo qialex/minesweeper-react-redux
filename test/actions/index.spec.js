@@ -5,6 +5,7 @@ import {
     changeGameSettings,
     updateGameTime,
     processFieldAction,
+    resetGameRecords,
 } from '../../src/js/actions/index';
 import GameSettings from '../../src/js/models/GameSettings';
 
@@ -13,67 +14,95 @@ describe('actions', () => {
 
     it('should create an action to change language', () => {
 
-        const language = 'en';
+        // mockLanguage
+        const mockLanguage = 'en';
 
+        // expected action
         const expectedAction = {
             type: LANGUAGE_CHANGED,
-            payload: language,
+            payload: mockLanguage,
         };
 
-        expect(globalChangeLanguage(language)).toEqual(expectedAction)
+        // should be equal to the result of globalChangeLanguage
+        expect(globalChangeLanguage(mockLanguage)).toEqual(expectedAction)
     });
 
     it('should create an action to reset game', () => {
 
+        // expected action
         const expectedAction = {
             type: MINESWEEPER.RESET_GAME,
         };
 
+        // should be equal to the result of resetGame
         expect(resetGame()).toEqual(expectedAction)
     });
 
     it('should create an action to change game settings game', () => {
 
-        const gameSettings = new GameSettings().props;
+        // mockGameSettings
+        const mockGameSettings = new GameSettings().props;
 
+        // expected action
         const expectedAction = {
             type: MINESWEEPER.CHANGE_GAME_SETTINGS,
-            payload: gameSettings,
+            payload: mockGameSettings,
         };
 
-        expect(changeGameSettings(gameSettings)).toEqual(expectedAction)
+        // should be equal to the result of changeGameSettings
+        expect(changeGameSettings(mockGameSettings)).toEqual(expectedAction)
     });
 
     it('should create an action to update time', () => {
 
-        const time = 10;
+        // mockTime
+        const mockTime = 10;
 
+        // expected action
         const expectedAction = {
             type: MINESWEEPER.UPDATE_GAME_TIME,
-            payload: time,
+            payload: mockTime,
         };
 
-        expect(updateGameTime(time)).toEqual(expectedAction)
+        // should be equal to the result of updateGameTime
+        expect(updateGameTime(mockTime)).toEqual(expectedAction)
     });
 
     it('should create an action to process a click (tap) on field', () => {
 
-        let obj = {tileIndex: 5, isPrimaryAction: true};
+        // mockPayload
+        let mockPayload = {tileIndex: 5, isPrimaryAction: true};
 
+        // expected action
         let expectedAction = {
             type: MINESWEEPER.PROCESS_USER_FIELD_ACTION,
-            payload: obj,
+            payload: mockPayload,
         };
 
-        expect(processFieldAction(obj)).toEqual(expectedAction);
+        // should be equal to the result of processFieldAction
+        expect(processFieldAction(mockPayload)).toEqual(expectedAction);
 
-        obj = {tileIndex: 5, isPrimaryAction: false};
+        // udating mock payload
+        mockPayload = {tileIndex: 5, isPrimaryAction: false};
 
+        // expected action
         expectedAction = {
             type: MINESWEEPER.PROCESS_USER_FIELD_ACTION,
-            payload: obj,
+            payload: mockPayload,
         };
 
-        expect(processFieldAction(obj)).toEqual(expectedAction);
+        // should be equal to the result of processFieldAction
+        expect(processFieldAction(mockPayload)).toEqual(expectedAction);
+    });
+
+    it('should create an action to reset gare records', () => {
+
+        // expected action
+        const expectedAction = {
+            type: MINESWEEPER.RESET_GAME_RECORDS,
+        };
+
+        // should be equal to the result of resetGameRecords
+        expect(resetGameRecords()).toEqual(expectedAction)
     });
 });

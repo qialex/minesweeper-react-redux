@@ -7,8 +7,8 @@ import store from "../../src/js/store/index";
 import L from "../../src/js/localization/Localization";
 import Game, { ConnectedGame } from "../../src/js/components/game/Game";
 import Field from "../../src/js/components/game/components/field/Field";
-import GameSettings from "../../src/js/models/GameSettings";
-import {processFieldAction} from "../../src/js/actions";
+import GameRecords from "../../src/js/models/GameRecords";
+import { processFieldAction } from "../../src/js/actions";
 
 jest.useFakeTimers();
 
@@ -46,8 +46,14 @@ describe('Component: Game, ConnectedGame',()=> {
         // should contain one .control-panel
         expect(component.find('.control-panel')).toHaveLength(1);
 
-        // should contain one .settings with
-        expect(component.find('.settings').find(Link).props().to).toBe('/settings/');
+        // should contain one .top-panel with 2 '.top-panel-link'
+        expect(component.find('.top-panel').find('.top-panel-link')).toHaveLength(2);
+
+        // should contain first .top-panel-link with a link to a /modal/settings
+        expect(component.find('.top-panel-link:first-child').find(Link).props().to).toBe('/modal/settings/');
+
+        // should contain last .top-panel-link with a link to a /modal/records
+        expect(component.find('.top-panel-link:last-child').find(Link).props().to).toBe('/modal/records/');
 
         // should contain one .game-panel
         expect(component.find('.game-panel')).toHaveLength(1);
@@ -73,7 +79,7 @@ describe('Component: Game, ConnectedGame',()=> {
             L.getAvailableLanguages().map(language => {
 
                 // setting language to the localStorage
-                global.localStorage.setItem('language', language);
+                localStorage.setItem('language', language);
 
                 // updating component
                 wrapper.dive();
@@ -83,7 +89,7 @@ describe('Component: Game, ConnectedGame',()=> {
             });
 
             // removing language from the localStorage
-            global.localStorage.removeItem('language');
+            localStorage.removeItem('language');
         });
     });
 
@@ -180,7 +186,7 @@ describe('Component: Game, ConnectedGame',()=> {
         });
     });
 
-    describe('scenario game win', () => {
+    describe('scenario game won', () => {
 
         it('should properly finish game', async () => {
 
@@ -224,6 +230,12 @@ describe('Component: Game, ConnectedGame',()=> {
 
             // .isMouseDown should be false
             expect(component.state().isMouseDown).toBeFalsy();
+
+            // getting gameRecords
+            const gameRecords = new GameRecords(component.state().gameRecordsSimple);
+
+            // record.isRecord should be true
+            expect(gameRecords.simplified[0].isRecord).toBeTruthy();
         });
     });
 });

@@ -1,0 +1,48 @@
+.modal-wrapper {
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .modal-content {
+
+    font-size: .9em;
+    width: 20em;
+    padding: 1em;
+    position: relative;
+    background-color: paleturquoise;
+    color: #a94766fc;
+    border: 0.1em dotted;
+    border-radius: 0.1em;
+
+    .settings-panel-close {
+
+      width: 1.5em;
+      height: 1.5em;
+      position: absolute;
+      right: 0;
+      top: 0;
+      display: block;
+      transform: rotate(45deg);
+      cursor: pointer;
+      color: #000000db;
+
+      &:after {
+
+        content: '+';
+        width: 1em;
+        height: 1em;
+        position: absolute;
+        font-size: 1.5em;
+        text-align: center;
+        opacity: 0.5;
+      }
+    }
+  }
+}

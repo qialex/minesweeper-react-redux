@@ -1,19 +1,19 @@
 // src/js/models/GameSettings.js
-import React from "react";
 
-const ConstGameSettings = {
+
+export const ConstGameSettings = {
     isQuestionTileEnabled: true,
     publicProps: [
         {
             code: 'x',
-            L_key: 'settings_field_height',
-            isSizeProp: true,
-        },
-        {
-            code: 'y',
             L_key: 'settings_field_width',
             isSizeProp: true,
             isRowLength: true,
+        },
+        {
+            code: 'y',
+            L_key: 'settings_field_height',
+            isSizeProp: true,
         },
         {
             code: 'bombs',
@@ -35,7 +35,7 @@ const ConstGameSettings = {
             L_key: 'settings_intermediate',
         },
         {
-            _props: [16, 30, 99],
+            _props: [30, 16, 99],
             code: 'expert',
             L_key: 'settings_expert',
         },

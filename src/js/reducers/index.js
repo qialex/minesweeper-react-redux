@@ -5,6 +5,7 @@ import GameSettings from "../models/GameSettings";
 import {seedBombs, createTiles, checkAllTitlesOpened, openTile} from '../utils/utils';
 import stateInitial from '../constants/state';
 import gameInitial from '../constants/game';
+import GameRecords from "../models/GameRecords";
 
 
 export const rootReducer = (state = stateInitial, action) => {
@@ -115,6 +116,15 @@ export const rootReducer = (state = stateInitial, action) => {
                         // if game is won
                         game.finished = true;
                         game.won = true;
+
+                        // getting gameRecords
+                        const gameRecords = new GameRecords(state.gameRecordsSimple);
+
+                        // adding record (it will check weather to update it inside)
+                        gameRecords.addRecord(Object.values(gameSettings), game.time);
+
+                        // returning state
+                        return { ...state, game: game, gameRecordsSimple: gameRecords.simplified };
                     }
                 }
 
@@ -146,6 +156,17 @@ export const rootReducer = (state = stateInitial, action) => {
             }
 
             return { ...state, game: game };
+        }
+        case MINESWEEPER.RESET_GAME_RECORDS: {
+
+            // getting gameRecords
+            const gameRecords = new GameRecords(state.gameRecordsSimple);
+
+            // resetting gameRecords
+            gameRecords.resetRecords();
+
+            // returning state
+            return { ...state, gameRecordsSimple: gameRecords.simplified };
         }
         default:
             return state;

@@ -21,8 +21,7 @@
       "^.+\\.(css|less|scss)$": "babel-jest"
     },
     "setupFiles": [
-      "<rootDir>test/_setup/enzyme.js",
-      "<rootDir>test/_setup/localStorageMock.js"
+      "<rootDir>test/_setup/enzyme.js"
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",

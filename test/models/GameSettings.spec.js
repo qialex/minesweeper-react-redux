@@ -1,4 +1,4 @@
-// test/models/GameSettings.js
+// test/models/GameSettings.spec.js
 import GameSettings from "../../src/js/models/GameSettings";
 
 

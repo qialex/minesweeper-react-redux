@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { globalChangeLanguage, resetGame, updateGameTime } from "../../actions/index";
 import Field from "./components/field/Field";
+import GameRecords from "../../models/GameRecords";
 import L from "../../localization/Localization";
 import './game.scss';
 
@@ -16,7 +17,7 @@ const mainButtonIconsNumbers = {
 
 const mapStateToProps = state => {
 
-    return { game: {...state.game}, gameSettings: {...state.gameSettings}, language: state.globalSettings.language };
+    return { game: {...state.game}, gameSettings: {...state.gameSettings}, language: state.globalSettings.language, gameRecordsSimple: state.gameRecordsSimple };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -50,6 +51,15 @@ export class ConnectedGame extends Component {
 
     static getRandomIconNumber(type) {
         return 1 + ( Math.random() * mainButtonIconsNumbers[type] ) << 0
+    }
+
+    static isNewRecord(game, gameSettings, gameRecordsSimple) {
+
+        // getting record
+        const record = new GameRecords(gameRecordsSimple).getRecordByProps(Object.values(gameSettings));
+
+        // checking if game won and there is a new record
+        return game.won && record && record.time === game.time;
     }
 
     constructor(){
@@ -144,7 +154,7 @@ export class ConnectedGame extends Component {
     render() {
 
         const { isMouseDown } = this.state;
-        const { game, gameSettings } = this.props;
+        const { game, gameSettings, gameRecordsSimple } = this.props;
         const bombsLeft = gameSettings.bombs - game.flags;
 
         const mainButtonClass = 'main-button' +
@@ -155,12 +165,20 @@ export class ConnectedGame extends Component {
                             : ''
             );
 
+        // checking weather of a new record
+        const isNewRecord = ConnectedGame.isNewRecord(game, gameSettings, gameRecordsSimple);
+
         return (
             <div className="main-wrapper">
                 <div className="game">
                     <div className="control-panel">
-                        <div className="settings">
-                            <Link to="/settings/">{L.settings}</Link>
+                        <div className="top-panel">
+                            <div className="top-panel-link">
+                                <Link to="/modal/settings/">{L.settings}</Link>
+                            </div>
+                            <div className="top-panel-link">
+                                <Link to="/modal/records/">{isNewRecord ? L.new_record + '!' : L.records}</Link>
+                            </div>
                         </div>
                         <div className="game-panel">
                             <div className="mines-left">

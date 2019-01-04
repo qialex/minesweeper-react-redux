@@ -14,6 +14,12 @@ const L = new LocalizedStrings({
         settings_intermediate: 'intermediate',
         settings_expert: 'expert',
         settings_custom: 'custom',
+        records: 'records',
+        new_record: 'new record',
+        no_record: 'no record',
+        reset: 'reset',
+        confirm_reset: 'confirm reset',
+        sec: 'sec',
     },
     ru: {
         thisLanguage: 'русский',
@@ -26,7 +32,13 @@ const L = new LocalizedStrings({
         settings_beginner: 'новичек',
         settings_intermediate: 'продвинутый',
         settings_expert: 'эксперт',
-        settings_custom: 'пользовательский',
+        settings_custom: 'кастом',
+        records: 'рекорды',
+        new_record: 'новый рекорд',
+        no_record: 'нет рекорда',
+        reset: 'сбросить',
+        confirm_reset: 'подтвердите сброс',
+        sec: 'сек',
     }
 });
 export default L;

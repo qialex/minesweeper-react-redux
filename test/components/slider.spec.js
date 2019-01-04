@@ -144,11 +144,27 @@ describe('Component: Slider',()=>{
 
         it('should invoke onValueChanged if .slider-line-wrapper is clicked', () => {
 
+            // mockContainsResult if we click on .slider-dot nothing should happen
+            let mockContainsResult = true;
+
             // creating mock event
             const event = {
-                nativeEvent: { offsetX: 1, },
-                target: { clientWidth: 1, }
+                nativeEvent: {
+                    offsetX: wrapper.instance().sliderLine.current.clientWidth,
+                    target: {
+                        classList: {contains: () => mockContainsResult}
+                    }
+                },
             };
+
+            // simulating change event
+            wrapper.find('.slider-line-wrapper').simulate('click', event);
+
+            // onValueChangedSpy should not be called once
+            expect(onValueChangedSpy.calledOnce).toBeFalsy();
+
+            // now we will simulate click not on .slider-dot
+            mockContainsResult = false;
 
             // simulating change event
             wrapper.find('.slider-line-wrapper').simulate('click', event);

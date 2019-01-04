@@ -1,28 +1,20 @@
-.settings-container {
+.records-container {
 
-  .radio-buttons-wrapper {
+  .records-flex {
 
-    @import "_radioButton";
-  }
+    margin-top: 2em;
+    display: flex;
+    justify-content: space-between;
 
-  .language-wrapper {
+    .records-column {
 
-    margin: 0.25em 0 2em;
-  }
+      flex-grow: 1;
 
-  .form-group {
+      .no-capitalize {
 
-    margin: 1em 0;
-
-    .no-capitalize {
-
-      text-transform: none;
+        text-transform: none;
+      }
     }
-  }
-
-  .sliders-wrapper {
-
-    margin-left: 1.8em;
   }
 
   .buttons-group {

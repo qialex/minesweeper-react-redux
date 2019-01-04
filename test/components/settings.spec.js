@@ -1,6 +1,5 @@
 // test/components/settings.spec.js
 import React from "react";
-import { Redirect } from "react-router-dom";
 import configureStore from 'redux-mock-store'
 import sinon from 'sinon';
 import { shallow } from '../_setup/enzyme';
@@ -15,11 +14,12 @@ describe('Component: Settings, ConnectedSettings',()=>{
 
     // setting spy on _reduxChangeGameSettings
     const _reduxChangeGameSettingsSpy = sinon.spy(ConnectedSettings.prototype, "_reduxChangeGameSettings");
+    const onCloseSpy = sinon.spy();
 
     // creating mock store
     const mockStore = configureStore([])(stateInitial);
 
-    // creating mock store
+    // creating gameSettings
     const gameSettings = new GameSettings(stateInitial.gameSettings);
 
     // declaring wrapper, component
@@ -28,7 +28,7 @@ describe('Component: Settings, ConnectedSettings',()=>{
     beforeEach(()=>{
 
         // wrapping Settings
-        wrapper = shallow(<Settings store={mockStore} />);
+        wrapper = shallow(<Settings store={mockStore} onClose={onCloseSpy} />);
 
         // getting component
         component = wrapper.dive();
@@ -36,14 +36,11 @@ describe('Component: Settings, ConnectedSettings',()=>{
 
     it('renders the component', () => {
 
-        // should contain one ConnectedLanguageSelect
+        // should contain one ConnectedSettings
         expect(wrapper.find(ConnectedSettings)).toHaveLength(1);
 
-        // should contain one div.setting-wrapper .setting-panel
-        expect(component.find('.setting-wrapper').find('.setting-panel')).toHaveLength(1);
-
-        // should contain one .settings-panel-close
-        expect(component.find('.settings-panel-close')).toHaveLength(1);
+        // should contain one .settings-container
+        expect(component.find('.settings-container').find(LanguageSelect)).toHaveLength(1);
 
         // should contain one .language-wrapper
         expect(component.find('.language-wrapper').find(LanguageSelect)).toHaveLength(1);
@@ -102,38 +99,15 @@ describe('Component: Settings, ConnectedSettings',()=>{
         });
     });
 
-    describe('click outside and close button', () => {
+    describe('close button', () => {
 
-        it('click outside should redirect back back to the game', () => {
-
-            let returnTrue = false;
-
-            // creating mock event. as for now this event is for inside mouse down, so redirect should happen
-            const event = { nativeEvent: { target: { classList: {contains: () => returnTrue}}}};
-
-            // firing event on .setting-wrapper
-            component.find('.setting-wrapper').props().onMouseDown(event);
-
-            // should not invoke Redirect
-            expect(component.find(Redirect)).toHaveLength(0);
-
-            // changing event to meet redirect requirements
-            returnTrue = true;
-
-            // again firing event on .setting-wrapper
-            component.find('.setting-wrapper').props().onMouseDown(event);
-
-            // should invoke Redirect
-            expect(component.find(Redirect)).toHaveLength(1);
-        });
-
-        it('close button should redirect back back to the game', () => {
+        it('close button should call parent method onClose (that will redirect back back to the game)', () => {
 
             // firing click on .button-close
             component.find('.button-close').simulate('click');
 
-            // should invoke Redirect
-            expect(component.find(Redirect)).toHaveLength(1);
+            // should invoke onClose
+            expect(onCloseSpy.calledOnce).toBeTruthy();
         });
     });
 

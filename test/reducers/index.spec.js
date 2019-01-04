@@ -1,9 +1,8 @@
-import { createStore } from "redux";
 import { rootReducer } from '../../src/js/reducers';
-import store from "../../src/js/store/index";
-import { globalChangeLanguage, resetGame, updateGameTime, changeGameSettings, processFieldAction } from "../../src/js/actions/index";
+import { globalChangeLanguage, resetGame, updateGameTime, changeGameSettings, processFieldAction, resetGameRecords } from "../../src/js/actions/index";
 import L from "../../src/js/localization/Localization";
 import GameSettings from "../../src/js/models/GameSettings";
+import GameRecords from "../../src/js/models/GameRecords";
 import stateInitial from '../../src/js/constants/state';
 import gameInitial from '../../src/js/constants/game';
 
@@ -363,5 +362,29 @@ describe('rootReducer', () => {
 
         // .game.won should be true
         expect(state.game.won).toBeTruthy();
+    });
+
+    it('should return the state updated due the MINESWEEPER.RESET_GAME_RECORDS', () => {
+
+        // getting gameRecordsSimple
+        const gameRecordsSimple = new GameRecords().simplified;
+
+        // setting first record .isRecord true
+        gameRecordsSimple[0].isRecord = true;
+
+        // getting state with record
+        let state = rootReducer({...stateInitial, gameRecordsSimple}, {});
+
+        // state should contain one game record with .isRecord = true
+        expect(state.gameRecordsSimple.filter(record => record.isRecord)).toHaveLength(1);
+
+        // creating action
+        const action = resetGameRecords();
+
+        // generating new state
+        state = rootReducer(state, action);
+
+        // state should not contain any game record with .isRecord = true
+        expect(state.gameRecordsSimple.filter(record => record.isRecord)).toHaveLength(0);
     });
 });
