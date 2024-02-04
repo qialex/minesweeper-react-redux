@@ -1,6 +1,9 @@
 Minesweeper React Redux [![Coverage Status](https://coveralls.io/repos/github/qialex/minesweeper-react-redux/badge.svg?branch=master)](https://coveralls.io/github/qialex/minesweeper-react-redux?branch=master)
 ====================
 
+Author: [Aleksandr Ishchenko](http://qialex.me/)
+
+
 1. Have bombs, flags, timer, field, settings, etc
 2. Controls by mouse
 3. Localization
@@ -18,4 +21,3 @@ Try it [here](https://qialex.github.io/minesweeper-react-redux)
 2. [BattleShips](https://qialex.github.io/Angular2-BattleShip/) - Angular2
 
 
-My profile: [Alex Ishenko](http://qialex.me/ui)
